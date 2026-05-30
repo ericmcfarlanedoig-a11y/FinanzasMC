@@ -1,0 +1,1412 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Presupuesto Familiar</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0f172a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Presupuesto">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    <link rel="icon" href="icon-192.png">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --primary: #f1f5f9;
+            --secondary: #4ade80;
+            --success: #22c55e;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --accent: #06b6d4;
+            --accent2: #8b5cf6;
+            --light: #1e293b;
+            --border: #334155;
+            --text: #e2e8f0;
+            --text-light: #94a3b8;
+            --bg-dark: #0f172a;
+            --bg-card: #1e293b;
+            --font: 'DM Sans', sans-serif;
+            --mono: 'DM Mono', monospace;
+        }
+        body {
+            font-family: var(--font);
+            background: var(--bg-dark);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container { max-width: 1400px; margin: 0 auto; }
+
+        /* ─── TOPBAR ─── */
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 28px;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+        .topbar-left h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary);
+            letter-spacing: -0.5px;
+        }
+        .topbar-left p { color: var(--text-light); font-size: 0.85rem; margin-top: 2px; }
+        .topbar-right { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+
+        /* Save indicator */
+        .save-indicator {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.8rem;
+            color: var(--text-light);
+            font-family: var(--mono);
+        }
+        .save-dot {
+            width: 7px; height: 7px;
+            border-radius: 50%;
+            background: var(--success);
+            animation: pulse 2s infinite;
+        }
+        .save-dot.dirty { background: var(--warning); animation: none; }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            padding: 9px 16px;
+            border-radius: 9px;
+            border: none;
+            font-family: var(--font);
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+        .btn:hover { transform: translateY(-1px); }
+        .btn:active { transform: translateY(0); }
+        .btn-primary { background: linear-gradient(135deg, var(--accent), #0891b2); color: white; }
+        .btn-primary:hover { box-shadow: 0 4px 14px rgba(6,182,212,0.35); }
+        .btn-success { background: linear-gradient(135deg, var(--success), #059669); color: white; }
+        .btn-success:hover { box-shadow: 0 4px 14px rgba(34,197,94,0.35); }
+        .btn-purple { background: linear-gradient(135deg, var(--accent2), #7c3aed); color: white; }
+        .btn-purple:hover { box-shadow: 0 4px 14px rgba(139,92,246,0.35); }
+        .btn-ghost { background: var(--bg-card); color: var(--text); border: 1px solid var(--border); }
+        .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+        .btn-danger-ghost { background: transparent; color: var(--text-light); border: none; padding: 4px 8px; font-size: 1.1rem; border-radius: 6px; }
+        .btn-danger-ghost:hover { background: rgba(239,68,68,0.1); color: var(--danger); transform: scale(1.1); }
+        .btn-small { padding: 6px 12px; font-size: 0.8rem; border-radius: 7px; }
+        .btn-add-row { width: 100%; justify-content: center; background: transparent; color: var(--accent); border: 1.5px dashed rgba(6,182,212,0.35); border-radius: 9px; padding: 10px; margin-top: 12px; font-size: 0.85rem; }
+        .btn-add-row:hover { background: rgba(6,182,212,0.06); border-color: var(--accent); transform: none; }
+
+        /* ─── DATE SELECTOR ─── */
+        .date-selector {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--bg-card);
+            padding: 10px 16px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+        }
+        .date-selector label { font-size: 0.75rem; font-weight: 600; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.4px; }
+        .date-selector select, .date-selector input[type="number"] {
+            padding: 6px 10px;
+            border: 1px solid var(--border);
+            border-radius: 7px;
+            font-family: var(--font);
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            background: var(--bg-dark);
+            color: var(--text);
+        }
+        .date-selector input[type="number"] { width: 72px; text-align: center; }
+
+        /* ─── SNAPSHOT HISTORY PANEL ─── */
+        .history-panel {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            margin-bottom: 24px;
+            overflow: hidden;
+        }
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 20px;
+            border-bottom: 1px solid var(--border);
+            cursor: pointer;
+            user-select: none;
+        }
+        .history-header h4 { font-size: 0.9rem; font-weight: 600; color: var(--text); display: flex; align-items: center; gap: 8px; }
+        .history-chevron { color: var(--text-light); transition: transform 0.2s; font-size: 0.8rem; }
+        .history-chevron.open { transform: rotate(180deg); }
+        .history-body { display: none; padding: 14px 20px; }
+        .history-body.open { display: block; }
+        .history-empty { color: var(--text-light); font-size: 0.85rem; text-align: center; padding: 16px 0; }
+        .snapshot-list { display: flex; flex-direction: column; gap: 8px; }
+        .snapshot-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 14px;
+            background: var(--bg-dark);
+            border-radius: 9px;
+            border: 1px solid var(--border);
+            gap: 12px;
+        }
+        .snapshot-info { flex: 1; }
+        .snapshot-name { font-weight: 600; font-size: 0.88rem; color: var(--text); }
+        .snapshot-meta { font-size: 0.75rem; color: var(--text-light); font-family: var(--mono); margin-top: 2px; }
+        .snapshot-actions { display: flex; gap: 6px; }
+        .snapshot-badge {
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 5px;
+            background: rgba(34,197,94,0.12);
+            color: var(--success);
+            border: 1px solid rgba(34,197,94,0.25);
+        }
+        .snapshot-badge.negative {
+            background: rgba(239,68,68,0.12);
+            color: var(--danger);
+            border-color: rgba(239,68,68,0.25);
+        }
+
+        /* ─── SUMMARY ─── */
+        .summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin-bottom: 28px; }
+        .stat-card {
+            background: var(--bg-card);
+            padding: 22px 24px;
+            border-radius: 14px;
+            border: 1px solid var(--border);
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.2s;
+        }
+        .stat-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, var(--accent), var(--accent2)); }
+        .stat-card.danger::before { background: linear-gradient(90deg, var(--danger), #dc2626); }
+        .stat-card.success::before { background: linear-gradient(90deg, var(--success), #059669); }
+        .stat-label { font-size: 0.75rem; font-weight: 600; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; }
+        .stat-value { font-size: 1.8rem; font-weight: 700; color: var(--primary); font-family: var(--mono); letter-spacing: -1px; }
+        .stat-card.danger .stat-value { color: var(--danger); }
+        .stat-card.success .stat-value { color: var(--success); }
+        .status { display: flex; align-items: center; gap: 5px; font-size: 0.78rem; font-weight: 600; margin-top: 6px; }
+        .status-dot { width: 7px; height: 7px; border-radius: 50%; }
+        .status-dot.positive { background: var(--success); animation: pulse 2s infinite; }
+        .status-dot.negative { background: var(--danger); }
+
+        /* ─── CHARTS ─── */
+        .charts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 20px; margin-bottom: 24px; }
+        .chart-container {
+            background: var(--bg-card);
+            border-radius: 14px;
+            border: 1px solid var(--border);
+            padding: 22px;
+        }
+        .chart-container h3 { font-size: 0.95rem; font-weight: 600; color: var(--text); margin-bottom: 18px; }
+        .chart-wrapper { position: relative; height: 260px; display: flex; justify-content: center; align-items: center; }
+
+        /* ─── MAIN GRID ─── */
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(480px, 1fr)); gap: 20px; margin-bottom: 24px; }
+
+        /* ─── CARDS ─── */
+        .card {
+            background: var(--bg-card);
+            border-radius: 14px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+        .card-header {
+            padding: 18px 22px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0,0,0,0.15);
+        }
+        .card-header h3 { font-size: 0.95rem; font-weight: 600; color: var(--text); display: flex; align-items: center; gap: 8px; }
+        .card-content { padding: 18px 22px; }
+
+        /* ─── INPUT ROWS ─── */
+        .input-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(51,65,85,0.5);
+            gap: 12px;
+            transition: background 0.15s;
+        }
+        .input-row:last-of-type { border-bottom: none; }
+        .input-row:hover { background: rgba(71,85,105,0.15); margin: 0 -8px; padding-left: 8px; padding-right: 8px; border-radius: 7px; }
+        .input-row label { flex: 1; font-size: 0.9rem; color: var(--text); font-weight: 400; }
+        .input-row.is-paid { opacity: 0.45; }
+        .input-row.is-paid label { text-decoration: line-through; color: var(--success); }
+        .input-wrapper { display: flex; align-items: center; gap: 8px; }
+
+        /* shared group */
+        .shared-amount-group { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; }
+        .shared-total-badge { font-size: 0.68rem; font-weight: 600; color: var(--accent); background: rgba(6,182,212,0.08); border: 1px solid rgba(6,182,212,0.2); padding: 1px 6px; border-radius: 4px; white-space: nowrap; font-family: var(--mono); }
+
+        /* number input */
+        input[type="number"] {
+            width: 110px;
+            padding: 7px 10px;
+            border: 1.5px solid var(--border);
+            border-radius: 8px;
+            font-family: var(--mono);
+            font-size: 0.88rem;
+            font-weight: 500;
+            color: var(--text);
+            background: var(--bg-dark);
+            text-align: right;
+            transition: all 0.2s;
+        }
+        input[type="number"]:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(6,182,212,0.15); }
+        input[type="number"]::-webkit-inner-spin-button, input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; }
+
+        /* text input */
+        input[type="text"] {
+            flex: 1;
+            min-width: 120px;
+            padding: 7px 10px;
+            border: 1.5px solid var(--border);
+            border-radius: 8px;
+            font-family: var(--font);
+            font-size: 0.88rem;
+            color: var(--text);
+            background: var(--bg-dark);
+            transition: all 0.2s;
+        }
+        input[type="text"]:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(6,182,212,0.15); }
+
+        /* checkbox */
+        .check-paid {
+            -webkit-appearance: none;
+            width: 18px; height: 18px;
+            border: 2px solid var(--border);
+            border-radius: 5px;
+            cursor: pointer;
+            flex-shrink: 0;
+            transition: all 0.2s;
+            background: var(--bg-dark);
+            position: relative;
+        }
+        .check-paid:checked { background: var(--success); border-color: var(--success); }
+        .check-paid:checked::after { content: '✓'; position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); color: white; font-size: 11px; font-weight: 700; line-height: 1; }
+
+        /* ─── CUOTAS SECTION ─── */
+        .cuotas-summary {
+            background: var(--bg-dark);
+            border-radius: 10px;
+            padding: 14px 16px;
+            margin-bottom: 12px;
+            border: 1px solid var(--border);
+        }
+        .cuotas-summary-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.82rem;
+        }
+        .cuotas-summary-row .label { color: var(--text-light); }
+        .cuotas-summary-row .value { font-family: var(--mono); font-weight: 600; color: var(--text); }
+        .cuotas-summary-divider { height: 1px; background: var(--border); margin: 8px 0; }
+        .cuotas-summary-total { font-size: 0.95rem; font-weight: 700; }
+        .cuotas-summary-total .value { color: var(--accent); font-size: 1.05rem; }
+
+        /* cuota table */
+        .cuotas-table-wrap { overflow-x: auto; }
+        .cuotas-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.8rem;
+        }
+        .cuotas-table th {
+            text-align: left;
+            padding: 7px 8px;
+            color: var(--text-light);
+            font-weight: 600;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.73rem;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            white-space: nowrap;
+        }
+        .cuotas-table th:last-child { text-align: right; }
+        .cuotas-table td {
+            padding: 7px 8px;
+            border-bottom: 1px solid rgba(51,65,85,0.4);
+            color: var(--text);
+            vertical-align: middle;
+        }
+        .cuotas-table td:last-child { text-align: right; font-family: var(--mono); font-weight: 600; }
+        .cuotas-table tr:last-child td { border-bottom: none; }
+        .cuotas-table tr:hover td { background: rgba(71,85,105,0.15); }
+
+        /* badges */
+        .badge {
+            display: inline-block;
+            font-size: 0.67rem;
+            font-weight: 700;
+            padding: 2px 7px;
+            border-radius: 20px;
+            white-space: nowrap;
+        }
+        .badge-danger { background: rgba(239,68,68,0.12); color: #fca5a5; border: 1px solid rgba(239,68,68,0.25); }
+        .badge-warning { background: rgba(245,158,11,0.12); color: #fcd34d; border: 1px solid rgba(245,158,11,0.25); }
+        .badge-success { background: rgba(34,197,94,0.12); color: #86efac; border: 1px solid rgba(34,197,94,0.25); }
+        .badge-default { background: rgba(148,163,184,0.1); color: var(--text-light); border: 1px solid rgba(148,163,184,0.2); }
+        .badge-info { background: rgba(6,182,212,0.1); color: #67e8f9; border: 1px solid rgba(6,182,212,0.25); }
+
+        /* section toggle */
+        .section-toggle {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 0;
+            cursor: pointer;
+            user-select: none;
+            color: var(--text-light);
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-top: 8px;
+        }
+        .section-toggle:hover { color: var(--text); }
+        .toggle-icon { transition: transform 0.2s; }
+        .toggle-icon.open { transform: rotate(90deg); }
+        .collapsible { overflow: hidden; max-height: 0; transition: max-height 0.3s ease; }
+        .collapsible.open { max-height: 2000px; }
+
+        /* highlight rows */
+        .highlight-row { border-left: 2px solid var(--accent); padding-left: 10px; margin-left: -8px; }
+        .highlight-row.bcp { border-left-color: #ffc107; }
+        .highlight-row.bbva { border-left-color: #004481; }
+
+        /* divider */
+        .divider { height: 1px; background: linear-gradient(90deg, transparent, var(--border), transparent); margin: 14px 0; }
+
+        /* extra items */
+        .extra-items { margin-top: 12px; padding-top: 12px; border-top: 1.5px dashed rgba(51,65,85,0.7); }
+        .extra-item { display: flex; gap: 8px; margin-bottom: 10px; align-items: center; }
+
+        /* ─── TRANSFERS PANEL ─── */
+        .transferencias-panel { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-bottom: 24px; }
+        .transferencia-card {
+            background: var(--bg-card);
+            border-radius: 14px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+        .t-header {
+            padding: 14px 18px;
+            font-weight: 700;
+            font-size: 0.88rem;
+        }
+        .transferencia-card.mancomunada .t-header { background: linear-gradient(135deg, rgba(6,182,212,0.1), rgba(6,182,212,0.03)); border-bottom: 1px solid rgba(6,182,212,0.2); color: var(--accent); }
+        .transferencia-card.cuchita .t-header { background: linear-gradient(135deg, rgba(74,222,128,0.1), rgba(74,222,128,0.03)); border-bottom: 1px solid rgba(74,222,128,0.2); color: var(--secondary); }
+        .t-items { padding: 10px 18px; }
+        .t-item { display: flex; justify-content: space-between; align-items: center; padding: 5px 0; font-size: 0.82rem; color: var(--text-light); border-bottom: 1px solid rgba(51,65,85,0.3); }
+        .t-item:last-child { border-bottom: none; }
+        .t-item-value { font-family: var(--mono); color: var(--text); }
+        .t-total { padding: 12px 18px; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); background: rgba(0,0,0,0.12); }
+        .t-total-label { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; color: var(--text-light); }
+        .transferencia-card.mancomunada .t-total-value { font-size: 1.3rem; font-weight: 700; color: var(--accent); font-family: var(--mono); }
+        .transferencia-card.cuchita .t-total-value { font-size: 1.3rem; font-weight: 700; color: var(--secondary); font-family: var(--mono); }
+
+        /* ─── MODAL ─── */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-overlay.open { display: flex; }
+        .modal {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 28px;
+            width: 90%;
+            max-width: 440px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+        }
+        .modal h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 16px; color: var(--primary); }
+        .modal label { font-size: 0.8rem; font-weight: 600; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.4px; display: block; margin-bottom: 6px; }
+        .modal input[type="text"] { width: 100%; margin-bottom: 16px; }
+        .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 6px; }
+
+        /* ─── ANIMATIONS ─── */
+        @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+        .card, .stat-card, .chart-container, .transferencia-card { animation: fadeInUp 0.4s ease-out; }
+
+        /* ─── PRINT ─── */
+        @media print {
+            body { background: white !important; color: black !important; padding: 10px; }
+            .topbar-right, .btn, .check-paid, .history-panel { display: none !important; }
+            .card, .stat-card { box-shadow: none !important; border: 1px solid #ccc !important; break-inside: avoid; }
+            * { color: black !important; background: white !important; border-color: #ccc !important; }
+        }
+
+        /* ─── RESPONSIVE ─── */
+        @media (max-width: 768px) {
+            .grid { grid-template-columns: 1fr; }
+            .charts-grid { grid-template-columns: 1fr; }
+            .topbar { flex-direction: column; align-items: flex-start; }
+            .date-selector { flex-wrap: wrap; }
+            .stat-value { font-size: 1.5rem; }
+        }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg-dark); }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <!-- TOPBAR -->
+    <div class="topbar">
+        <div class="topbar-left">
+            <h1>💰 Dashboard Financiero Familiar</h1>
+            <p>Control de ingresos, gastos y compromisos</p>
+        </div>
+        <div class="topbar-right">
+            <div class="save-indicator">
+                <div class="save-dot" id="saveDot"></div>
+                <span id="saveLabel">Guardado</span>
+            </div>
+            <div class="date-selector">
+                <label>Mes</label>
+                <select id="mes-select" onchange="onDateChange()">
+                    <option value="1">Enero</option><option value="2">Febrero</option><option value="3">Marzo</option>
+                    <option value="4">Abril</option><option value="5">Mayo</option><option value="6">Junio</option>
+                    <option value="7">Julio</option><option value="8">Agosto</option><option value="9">Septiembre</option>
+                    <option value="10">Octubre</option><option value="11">Noviembre</option><option value="12">Diciembre</option>
+                </select>
+                <input type="number" id="year-input" value="2026" min="2020" max="2035" onchange="onDateChange()">
+                <button class="btn btn-ghost btn-small" onclick="establecerHoy()">Hoy</button>
+            </div>
+            <button class="btn btn-success btn-small" onclick="saveSnapshot()">💾 Guardar mes</button>
+            <button class="btn btn-purple btn-small" onclick="exportarPDF()">📄 Exportar PDF</button>
+        </div>
+    </div>
+
+    <!-- HISTORY PANEL -->
+    <div class="history-panel">
+        <div class="history-header" onclick="toggleHistory()">
+            <h4>🗂️ Historial de meses guardados <span id="history-count" style="font-size:0.75rem;color:var(--text-light);font-weight:400;"></span></h4>
+            <span class="history-chevron" id="historyChevron">▼</span>
+        </div>
+        <div class="history-body" id="historyBody">
+            <div class="history-empty" id="historyEmpty">No hay meses guardados aún. Presiona "💾 Guardar mes" para crear tu primer snapshot.</div>
+            <div class="snapshot-list" id="snapshotList"></div>
+        </div>
+    </div>
+
+    <!-- SUMMARY -->
+    <div class="summary">
+        <div class="stat-card success">
+            <div class="stat-label">📈 Ingresos Totales</div>
+            <div class="stat-value" id="total-ing">S/ 0.00</div>
+        </div>
+        <div class="stat-card danger">
+            <div class="stat-label">📉 Gastos Totales</div>
+            <div class="stat-value" id="total-egre">S/ 0.00</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">✨ Saldo Disponible</div>
+            <div class="stat-value" id="total-saldo">S/ 0.00</div>
+            <div class="status" id="status-indicator">
+                <span class="status-dot positive"></span>
+                <span id="status-text">Positivo</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- CHARTS -->
+    <div class="charts-grid">
+        <div class="chart-container">
+            <h3>Distribución de Ingresos</h3>
+            <div class="chart-wrapper"><canvas id="chartIngresos" role="img" aria-label="Gráfico de distribución de ingresos">Gráfico de ingresos</canvas></div>
+        </div>
+        <div class="chart-container">
+            <h3>Distribución de Gastos</h3>
+            <div class="chart-wrapper"><canvas id="chartGastos" role="img" aria-label="Gráfico de distribución de gastos">Gráfico de gastos</canvas></div>
+        </div>
+    </div>
+
+    <!-- MAIN GRID -->
+    <div class="grid">
+
+        <!-- INGRESOS -->
+        <div class="card">
+            <div class="card-header">
+                <h3>💵 Ingresos Mensuales</h3>
+            </div>
+            <div class="card-content">
+                <div class="input-row">
+                    <label>Sueldo ZHI</label>
+                    <div class="input-wrapper">
+                        <input type="number" class="ing" data-label="Sueldo ZHI" value="7500" oninput="markDirty();calc()">
+                        <button class="btn btn-danger-ghost" onclick="eliminarFila(this)" title="Eliminar">×</button>
+                    </div>
+                </div>
+                <div class="input-row">
+                    <label>Alquiler Oxapampa</label>
+                    <div class="input-wrapper">
+                        <input type="number" class="ing" data-label="Alquiler Oxapampa" value="2000" oninput="markDirty();calc()">
+                        <button class="btn btn-danger-ghost" onclick="eliminarFila(this)" title="Eliminar">×</button>
+                    </div>
+                </div>
+                <div class="input-row">
+                    <label>Otros Ingresos</label>
+                    <div class="input-wrapper">
+                        <input type="number" class="ing" data-label="Otros Ingresos" value="0" oninput="markDirty();calc()">
+                        <button class="btn btn-danger-ghost" onclick="eliminarFila(this)" title="Eliminar">×</button>
+                    </div>
+                </div>
+                <div class="extra-items" id="extra-ingresos"></div>
+                <button class="btn btn-add-row" onclick="addExtraIngreso()">+ Agregar Ingreso</button>
+            </div>
+        </div>
+
+        <!-- COMPROMISOS BANCARIOS -->
+        <div class="card">
+            <div class="card-header">
+                <h3>🏦 Compromisos Bancarios</h3>
+            </div>
+            <div class="card-content">
+                <!-- Préstamo principal -->
+                <div class="input-row highlight-row">
+                    <label><strong>Préstamo Principal</strong></label>
+                    <div class="input-wrapper">
+                        <input type="checkbox" class="check-paid" onchange="togglePagado(this)">
+                        <span class="badge badge-success">Abr 2028</span>
+                        <input type="number" class="egre" data-label="Préstamo Principal" value="480" oninput="markDirty();calc()">
+                        <button class="btn btn-danger-ghost" onclick="eliminarFila(this)">×</button>
+                    </div>
+                </div>
+
+                <!-- CUOTAS SECTION -->
+                <div style="margin-top: 14px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 10px;">
+                        <div style="font-size:0.82rem; font-weight:700; color:var(--text-light); text-transform:uppercase; letter-spacing:0.4px; display:flex; align-items:center; gap:6px;">
+                            💳 Compras en Cuotas
+                        </div>
+                        <div style="display:flex; gap:6px; align-items:center;">
+                            <button class="btn btn-ghost btn-small" onclick="openCuotaModal()" style="font-size:0.75rem; padding:5px 10px;">+ Agregar cuota</button>
+                            <div class="section-toggle" id="cuotasToggle" onclick="toggleCuotas()" style="margin:0; padding:4px 8px; border:1px solid var(--border); border-radius:7px; background:var(--bg-dark);">
+                                <span class="toggle-icon" id="cuotasIcon">▶</span>
+                                <span id="cuotasToggleLabel">Ver detalle</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Summary always visible -->
+                    <div class="cuotas-summary" id="cuotasSummary">
+                        <div class="cuotas-summary-row cuotas-summary-total">
+                            <span class="label">Total cuotas este mes</span>
+                            <span class="value" id="cuotasTotalMes">S/ 0.00</span>
+                        </div>
+                        <div class="cuotas-summary-divider"></div>
+                        <div class="cuotas-summary-row">
+                            <span class="label">Cuotas activas</span>
+                            <span class="value" id="cuotasActivasCount">0</span>
+                        </div>
+                        <div class="cuotas-summary-row">
+                            <span class="label">Terminan este mes</span>
+                            <span class="value" style="color:var(--danger);" id="cuotasTerminanMes">0</span>
+                        </div>
+                        <div class="cuotas-summary-row">
+                            <span class="label">Terminan pronto (≤3m)</span>
+                            <span class="value" style="color:var(--warning);" id="cuotasTerminanPronto">0</span>
+                        </div>
+                    </div>
+
+                    <!-- Collapsible detail -->
+                    <div class="collapsible" id="cuotasDetail">
+                        <div class="cuotas-table-wrap">
+                            <table class="cuotas-table">
+                                <thead>
+                                    <tr>
+                                        <th>Establecimiento</th>
+                                        <th>Cuota</th>
+                                        <th>Vence</th>
+                                        <th style="text-align:right;">Monto / mes</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="cuotasTableBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="divider"></div>
+
+                <!-- Tarjetas -->
+                <div class="input-row highlight-row bcp">
+                    <label><strong>💳 Tarjeta BCP</strong></label>
+                    <div class="input-wrapper">
+                        <input type="number" class="egre" data-label="Tarjeta BCP" value="0" oninput="markDirty();calc()">
+                        <button class="btn btn-danger-ghost" onclick="eliminarFila(this)">×</button>
+                    </div>
+                </div>
+                <div class="input-row highlight-row bbva">
+                    <label><strong>💳 Tarjeta BBVA</strong></label>
+                    <div class="input-wrapper">
+                        <input type="number" class="egre" data-label="Tarjeta BBVA" value="0" oninput="markDirty();calc()">
+                        <button class="btn btn-danger-ghost" onclick="eliminarFila(this)">×</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- GASTOS FAMILIARES -->
+        <div class="card" id="card-gastos-compartidos">
+            <div class="card-header">
+                <h3>🏠 Gastos Familiares</h3>
+                <button class="btn btn-ghost btn-small" onclick="exportarGastosCompartidos()">📥 PNG</button>
+            </div>
+            <div class="card-content">
+                <div class="input-row">
+                    <label>Comida</label>
+                    <div class="input-wrapper">
+                        <input type="checkbox" class="check-paid" onchange="togglePagado(this)">
+                        <div class="shared-amount-group">
+                            <input type="number" class="egre shared" data-label="Comida" value="3000" oninput="markDirty();calc()">
+                            <span class="shared-total-badge"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="input-row">
+                    <label>Colegio Camila</label>
+                    <div class="input-wrapper">
+                        <input type="checkbox" class="check-paid" onchange="togglePagado(this)">
+                        <div class="shared-amount-group">
+                            <input type="number" class="egre shared" data-label="Colegio Camila" value="2300" oninput="markDirty();calc()">
+                            <span class="shared-total-badge"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="input-row">
+                    <label>Departamento</label>
+                    <div class="input-wrapper">
+                        <input type="checkbox" class="check-paid" onchange="togglePagado(this)">
+                        <div class="shared-amount-group">
+                            <input type="number" class="egre shared" data-label="Departamento" value="2700" oninput="markDirty();calc()">
+                            <span class="shared-total-badge"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="input-row">
+                    <label>Luz</label>
+                    <div class="input-wrapper">
+                        <input type="checkbox" class="check-paid" onchange="togglePagado(this)">
+                        <div class="shared-amount-group">
+                            <input type="number" class="egre shared" data-label="Luz" value="221" oninput="markDirty();calc()">
+                            <span class="shared-total-badge"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="input-row">
+                    <label>Cálidda</label>
+                    <div class="input-wrapper">
+                        <input type="checkbox" class="check-paid" onchange="togglePagado(this)">
+                        <div class="shared-amount-group">
+                            <input type="number" class="egre shared" data-label="Cálidda" value="89.60" oninput="markDirty();calc()">
+                            <span class="shared-total-badge"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="input-row">
+                    <label>Internet / TV</label>
+                    <div class="input-wrapper">
+                        <input type="checkbox" class="check-paid" onchange="togglePagado(this)">
+                        <div class="shared-amount-group">
+                            <input type="number" class="egre shared" data-label="Internet / TV" value="220" oninput="markDirty();calc()">
+                            <span class="shared-total-badge"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="input-row">
+                    <label>Club Regatas</label>
+                    <div class="input-wrapper">
+                        <input type="checkbox" class="check-paid" onchange="togglePagado(this)">
+                        <div class="shared-amount-group">
+                            <input type="number" class="egre shared" data-label="Club Regatas" value="644" oninput="markDirty();calc()">
+                            <span class="shared-total-badge"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="input-row">
+                    <label>Club Lima Cricket</label>
+                    <div class="input-wrapper">
+                        <input type="checkbox" class="check-paid" onchange="togglePagado(this)">
+                        <div class="shared-amount-group">
+                            <input type="number" class="egre shared" data-label="Club Lima Cricket" value="421" oninput="markDirty();calc()">
+                            <span class="shared-total-badge"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="input-row">
+                    <label>CARMEN</label>
+                    <div class="input-wrapper">
+                        <input type="checkbox" class="check-paid" onchange="togglePagado(this)">
+                        <div class="shared-amount-group">
+                            <input type="number" class="egre shared" data-label="CARMEN" value="1000" oninput="markDirty();calc()">
+                            <span class="shared-total-badge"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="input-row">
+                    <label>Mantenimiento</label>
+                    <div class="input-wrapper">
+                        <input type="checkbox" class="check-paid" onchange="togglePagado(this)">
+                        <div class="shared-amount-group">
+                            <input type="number" class="egre shared" data-label="Mantenimiento" value="560" oninput="markDirty();calc()">
+                            <span class="shared-total-badge"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="extra-items" id="extra-shared"></div>
+                <button class="btn btn-add-row" onclick="addExtraShared()">+ Agregar Gasto Extra</button>
+            </div>
+        </div>
+
+        <!-- SEGUROS Y OTROS -->
+        <div class="card">
+            <div class="card-header">
+                <h3>🛡️ Seguros, Suscripciones y Otros</h3>
+            </div>
+            <div class="card-content">
+                <div class="input-row">
+                    <label>Seguro RIMAC</label>
+                    <div class="input-wrapper">
+                        <input type="checkbox" class="check-paid" onchange="togglePagado(this)">
+                        <input type="number" class="egre" data-label="Seguro RIMAC" value="342" oninput="markDirty();calc()">
+                        <button class="btn btn-danger-ghost" onclick="eliminarFila(this)">×</button>
+                    </div>
+                </div>
+                <div class="input-row">
+                    <label>Seguro AUTO</label>
+                    <div class="input-wrapper">
+                        <input type="checkbox" class="check-paid" onchange="togglePagado(this)">
+                        <input type="number" class="egre" data-label="Seguro AUTO" value="342" oninput="markDirty();calc()">
+                        <button class="btn btn-danger-ghost" onclick="eliminarFila(this)">×</button>
+                    </div>
+                </div>
+                <div class="input-row">
+                    <label>Suscripciones Digitales</label>
+                    <div class="input-wrapper">
+                        <input type="checkbox" class="check-paid" onchange="togglePagado(this)">
+                        <input type="number" class="egre" data-label="Suscripciones Digitales" value="190.99" oninput="markDirty();calc()">
+                        <button class="btn btn-danger-ghost" onclick="eliminarFila(this)">×</button>
+                    </div>
+                </div>
+                <div class="extra-items" id="extra-otros"></div>
+                <button class="btn btn-add-row" onclick="addExtraOtros()">+ Agregar Otro Gasto</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TRANSFERENCIAS -->
+    <div class="transferencias-panel">
+        <div class="transferencia-card mancomunada">
+            <div class="t-header">🏦 Transferencia → Cuenta Mancomunada</div>
+            <div class="t-items" id="items-mancomunada"></div>
+            <div class="t-total">
+                <span class="t-total-label">Total a transferir</span>
+                <span class="t-total-value" id="total-mancomunada">S/ 0.00</span>
+            </div>
+        </div>
+        <div class="transferencia-card cuchita">
+            <div class="t-header">👩 Transferencia → Cuchita</div>
+            <div class="t-items" id="items-cuchita"></div>
+            <div class="t-total">
+                <span class="t-total-label">Total a transferir</span>
+                <span class="t-total-value" id="total-cuchita">S/ 0.00</span>
+            </div>
+        </div>
+    </div>
+
+</div><!-- fin .container -->
+
+<!-- MODAL AGREGAR CUOTA -->
+<div class="modal-overlay" id="cuotaModal">
+    <div class="modal">
+        <h3>➕ Agregar Compra en Cuotas</h3>
+        <label>Establecimiento</label>
+        <input type="text" id="cuotaStore" placeholder="Ej: Marathon Salaverry">
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+            <div>
+                <label>Monto total (S/)</label>
+                <input type="number" id="cuotaTotal" placeholder="0.00" style="width:100%; margin-bottom:16px;">
+            </div>
+            <div>
+                <label>N° cuotas</label>
+                <input type="number" id="cuotaNumero" placeholder="12" min="1" style="width:100%; margin-bottom:16px;">
+            </div>
+        </div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+            <div>
+                <label>Cuotas pagadas</label>
+                <input type="number" id="cuotaPagadas" placeholder="0" min="0" style="width:100%; margin-bottom:16px;">
+            </div>
+            <div>
+                <label>Fecha operación</label>
+                <input type="text" id="cuotaFecha" placeholder="YYYY-MM-DD" style="width:100%; margin-bottom:16px;">
+            </div>
+        </div>
+        <div class="modal-actions">
+            <button class="btn btn-ghost" onclick="closeCuotaModal()">Cancelar</button>
+            <button class="btn btn-primary" onclick="addCuota()">Agregar</button>
+        </div>
+    </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════
+// DATA
+// ══════════════════════════════════════════════
+const MESES = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
+const MANCOMUNADA_LABELS = ['Colegio Camila','Departamento','Luz','Cálidda','Internet / TV','Club Regatas','Mantenimiento'];
+const CUCHITA_LABELS     = ['CARMEN','Club Lima Cricket','Comida'];
+
+// Default cuotas (from the previous payment schedule)
+let cuotas = [
+    { store: "Marathon Salaverry",        total: 218.00,  cuotas: 6,  pagadas: 0, fecha: "2026-05-13" },
+    { store: "Entel TPF RP Salv Eventos", total: 3299.00, cuotas: 36, pagadas: 0, fecha: "2026-05-09" },
+    { store: "Oakley",                    total: 881.10,  cuotas: 12, pagadas: 1, fecha: "2026-04-21" },
+    { store: "iShop Larcomar",            total: 8503.00, cuotas: 36, pagadas: 1, fecha: "2026-04-21" },
+    { store: "Samsonite Salaverry",       total: 264.30,  cuotas: 12, pagadas: 3, fecha: "2026-02-21" },
+    { store: "Tramontina Store",          total: 179.90,  cuotas: 6,  pagadas: 3, fecha: "2026-02-21" },
+    { store: "CLB Salaverry",             total: 279.30,  cuotas: 6,  pagadas: 3, fecha: "2026-02-21" },
+    { store: "Ripcurl",                   total: 473.75,  cuotas: 5,  pagadas: 3, fecha: "2026-02-11" },
+    { store: "Maui And Sons",             total: 149.14,  cuotas: 5,  pagadas: 4, fecha: "2026-02-02" },
+    { store: "Surprice",                  total: 414.00,  cuotas: 6,  pagadas: 4, fecha: "2026-01-30" },
+    { store: "Guess Salaverry",           total: 570.22,  cuotas: 5,  pagadas: 4, fecha: "2026-01-30" },
+];
+
+let snapshots = [];
+let isDirty = false;
+let chartIngresos = null, chartGastos = null;
+
+// ══════════════════════════════════════════════
+// HELPERS
+// ══════════════════════════════════════════════
+function fmt(v) {
+    return new Intl.NumberFormat('es-PE',{style:'currency',currency:'PEN',minimumFractionDigits:2}).format(v);
+}
+function getMes() { return parseInt(document.getElementById('mes-select').value); }
+function getYear() { return parseInt(document.getElementById('year-input').value); }
+
+function getFirstUnpaidMonth(item) {
+    const d = new Date(item.fecha);
+    d.setMonth(d.getMonth() + item.pagadas + 1);
+    return new Date(d.getFullYear(), d.getMonth(), 1);
+}
+
+function getLastMonth(item) {
+    const d = new Date(item.fecha);
+    d.setMonth(d.getMonth() + item.cuotas);
+    return new Date(d.getFullYear(), d.getMonth(), 1);
+}
+
+function isActiveInMonth(item, mes, year) {
+    const target = new Date(year, mes - 1, 1);
+    const first = getFirstUnpaidMonth(item);
+    const last = getLastMonth(item);
+    return target >= first && target <= last;
+}
+
+function monthlyPayment(item) { return item.total / item.cuotas; }
+
+function cuotaNumberInMonth(item, mes, year) {
+    const target = new Date(year, mes - 1, 1);
+    const first = getFirstUnpaidMonth(item);
+    const diff = (target.getFullYear() - first.getFullYear()) * 12 + (target.getMonth() - first.getMonth());
+    return item.pagadas + 1 + diff;
+}
+
+function monthsRemaining(item, mes, year) {
+    const last = getLastMonth(item);
+    const target = new Date(year, mes - 1, 1);
+    return (last.getFullYear() - target.getFullYear()) * 12 + (last.getMonth() - target.getMonth());
+}
+
+// ══════════════════════════════════════════════
+// CUOTAS SECTION
+// ══════════════════════════════════════════════
+function renderCuotas() {
+    const mes = getMes();
+    const year = getYear();
+    const active = cuotas.filter(c => isActiveInMonth(c, mes, year));
+    const inactive = cuotas.filter(c => !isActiveInMonth(c, mes, year));
+
+    // Stats
+    const totalMes = active.reduce((s, c) => s + monthlyPayment(c), 0);
+    const terminanEste = active.filter(c => monthsRemaining(c, mes, year) === 0).length;
+    const terminanPronto = active.filter(c => { const r = monthsRemaining(c, mes, year); return r > 0 && r <= 3; }).length;
+
+    document.getElementById('cuotasTotalMes').textContent = fmt(totalMes);
+    document.getElementById('cuotasActivasCount').textContent = active.length;
+    document.getElementById('cuotasTerminanMes').textContent = terminanEste;
+    document.getElementById('cuotasTerminanPronto').textContent = terminanPronto;
+
+    // Table
+    const tbody = document.getElementById('cuotasTableBody');
+    let html = '';
+    [...active, ...inactive].forEach((item, i) => {
+        const isActive = isActiveInMonth(item, mes, year);
+        const monthly = monthlyPayment(item);
+        const cuotaNum = isActive ? cuotaNumberInMonth(item, mes, year) : '-';
+        const rem = isActive ? monthsRemaining(item, mes, year) : null;
+        const last = getLastMonth(item);
+        const lastLabel = MESES[last.getMonth()] + ' ' + last.getFullYear();
+
+        let badgeClass = 'badge-default';
+        let badgeText = lastLabel;
+        if (!isActive) {
+            badgeClass = 'badge-success';
+            badgeText = '✓ Terminado';
+        } else if (rem === 0) {
+            badgeClass = 'badge-danger';
+            badgeText = 'Último mes';
+        } else if (rem <= 3) {
+            badgeClass = 'badge-warning';
+            badgeText = lastLabel;
+        }
+
+        html += `<tr style="${!isActive ? 'opacity:0.4;' : ''}">
+            <td>${item.store}</td>
+            <td><span class="badge badge-info">${isActive ? cuotaNum + '/' + item.cuotas : '-'}</span></td>
+            <td><span class="badge ${badgeClass}">${badgeText}</span></td>
+            <td>${isActive ? fmt(monthly) : '-'}</td>
+            <td><button class="btn btn-danger-ghost" style="padding:3px 7px;font-size:1rem;" onclick="deleteCuota(${i})" title="Eliminar">×</button></td>
+        </tr>`;
+    });
+    tbody.innerHTML = html;
+}
+
+function deleteCuota(i) {
+    cuotas.splice(i, 1);
+    markDirty();
+    calc();
+}
+
+function toggleCuotas() {
+    const detail = document.getElementById('cuotasDetail');
+    const icon = document.getElementById('cuotasIcon');
+    const label = document.getElementById('cuotasToggleLabel');
+    const isOpen = detail.classList.toggle('open');
+    icon.style.transform = isOpen ? 'rotate(90deg)' : '';
+    label.textContent = isOpen ? 'Ocultar' : 'Ver detalle';
+}
+
+// ══════════════════════════════════════════════
+// MODAL
+// ══════════════════════════════════════════════
+function openCuotaModal() {
+    document.getElementById('cuotaModal').classList.add('open');
+    const hoy = new Date();
+    document.getElementById('cuotaFecha').value = hoy.toISOString().slice(0,10);
+    document.getElementById('cuotaPagadas').value = '0';
+    document.getElementById('cuotaStore').focus();
+}
+function closeCuotaModal() {
+    document.getElementById('cuotaModal').classList.remove('open');
+    ['cuotaStore','cuotaTotal','cuotaNumero','cuotaPagadas','cuotaFecha'].forEach(id => document.getElementById(id).value = '');
+}
+function addCuota() {
+    const store   = document.getElementById('cuotaStore').value.trim();
+    const total   = parseFloat(document.getElementById('cuotaTotal').value);
+    const numero  = parseInt(document.getElementById('cuotaNumero').value);
+    const pagadas = parseInt(document.getElementById('cuotaPagadas').value) || 0;
+    const fecha   = document.getElementById('cuotaFecha').value;
+    if (!store || isNaN(total) || isNaN(numero) || !fecha) {
+        alert('Por favor completa todos los campos.'); return;
+    }
+    cuotas.push({ store, total, cuotas: numero, pagadas, fecha });
+    closeCuotaModal();
+    markDirty();
+    calc();
+}
+
+// ══════════════════════════════════════════════
+// SAVE / HISTORY
+// ══════════════════════════════════════════════
+function markDirty() {
+    isDirty = true;
+    document.getElementById('saveDot').className = 'save-dot dirty';
+    document.getElementById('saveLabel').textContent = 'Sin guardar';
+}
+function markClean() {
+    isDirty = false;
+    document.getElementById('saveDot').className = 'save-dot';
+    document.getElementById('saveLabel').textContent = 'Guardado';
+}
+
+function saveSnapshot() {
+    const mes = getMes();
+    const year = getYear();
+    const label = MESES[mes-1] + ' ' + year;
+    const totalIng = parseFloat(document.getElementById('total-ing').textContent.replace(/[^0-9.]/g,'')) || 0;
+    const totalEgr = parseFloat(document.getElementById('total-egre').textContent.replace(/[^0-9.]/g,'')) || 0;
+    const saldo = totalIng - totalEgr;
+
+    const snap = {
+        id: Date.now(),
+        label,
+        mes, year,
+        savedAt: new Date().toLocaleString('es-PE'),
+        totalIng, totalEgr, saldo,
+        cuotas: JSON.parse(JSON.stringify(cuotas)),
+        notes: ''
+    };
+
+    // Replace existing same month
+    const existing = snapshots.findIndex(s => s.mes === mes && s.year === year);
+    if (existing >= 0) snapshots[existing] = snap;
+    else snapshots.unshift(snap);
+
+    saveToStorage();
+    renderHistory();
+    markClean();
+
+    // Flash confirmation
+    const btn = document.querySelector('.btn-success');
+    const orig = btn.textContent;
+    btn.textContent = '✅ Guardado!';
+    setTimeout(() => { btn.textContent = orig; }, 1500);
+}
+
+function saveToStorage() {
+    try {
+        localStorage.setItem('finanzas_snapshots', JSON.stringify(snapshots));
+        localStorage.setItem('finanzas_cuotas', JSON.stringify(cuotas));
+    } catch(e) { console.warn('localStorage not available'); }
+}
+
+function loadFromStorage() {
+    try {
+        const s = localStorage.getItem('finanzas_snapshots');
+        if (s) snapshots = JSON.parse(s);
+        const c = localStorage.getItem('finanzas_cuotas');
+        if (c) cuotas = JSON.parse(c);
+    } catch(e) { console.warn('Could not load from storage'); }
+}
+
+function renderHistory() {
+    const list = document.getElementById('snapshotList');
+    const empty = document.getElementById('historyEmpty');
+    const count = document.getElementById('history-count');
+    count.textContent = snapshots.length > 0 ? `(${snapshots.length})` : '';
+
+    if (snapshots.length === 0) {
+        empty.style.display = 'block';
+        list.innerHTML = '';
+        return;
+    }
+    empty.style.display = 'none';
+    list.innerHTML = snapshots.map(s => {
+        const saldoClass = s.saldo >= 0 ? '' : 'negative';
+        const saldoLabel = s.saldo >= 0 ? '✓ Positivo' : '✗ Negativo';
+        return `<div class="snapshot-item">
+            <div class="snapshot-info">
+                <div class="snapshot-name">${s.label}</div>
+                <div class="snapshot-meta">Guardado: ${s.savedAt} &nbsp;|&nbsp; Ing: ${fmt(s.totalIng)} &nbsp;|&nbsp; Gas: ${fmt(s.totalEgr)}</div>
+            </div>
+            <span class="snapshot-badge ${saldoClass}">${saldoLabel} ${fmt(Math.abs(s.saldo))}</span>
+            <div class="snapshot-actions">
+                <button class="btn btn-ghost btn-small" onclick="loadSnapshot(${s.id})" title="Cargar este mes">📂 Cargar</button>
+                <button class="btn btn-purple btn-small" onclick="exportSnapshot(${s.id})" title="Exportar PDF">📄</button>
+                <button class="btn btn-danger-ghost" onclick="deleteSnapshot(${s.id})" title="Eliminar">×</button>
+            </div>
+        </div>`;
+    }).join('');
+}
+
+function loadSnapshot(id) {
+    const snap = snapshots.find(s => s.id === id);
+    if (!snap) return;
+    cuotas = JSON.parse(JSON.stringify(snap.cuotas));
+    document.getElementById('mes-select').value = snap.mes;
+    document.getElementById('year-input').value = snap.year;
+    calc();
+    markClean();
+}
+
+function deleteSnapshot(id) {
+    if (!confirm('¿Eliminar este snapshot?')) return;
+    snapshots = snapshots.filter(s => s.id !== id);
+    saveToStorage();
+    renderHistory();
+}
+
+function exportSnapshot(id) {
+    const snap = snapshots.find(s => s.id === id);
+    if (!snap) return;
+    // Simple text export as a backup
+    const txt = `PRESUPUESTO FAMILIAR - ${snap.label}
+Guardado: ${snap.savedAt}
+${'─'.repeat(40)}
+Ingresos:   ${fmt(snap.totalIng)}
+Egresos:    ${fmt(snap.totalEgr)}
+Saldo:      ${fmt(snap.saldo)}
+${'─'.repeat(40)}
+Cuotas activas ese mes:
+${snap.cuotas.map(c => `  • ${c.store}: ${fmt(c.total/c.cuotas)}/mes`).join('\n')}
+`;
+    const blob = new Blob([txt], {type:'text/plain'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `Presupuesto_${snap.label.replace(' ','_')}.txt`;
+    a.click();
+}
+
+function toggleHistory() {
+    const body = document.getElementById('historyBody');
+    const chevron = document.getElementById('historyChevron');
+    body.classList.toggle('open');
+    chevron.classList.toggle('open');
+}
+
+// ══════════════════════════════════════════════
+// MAIN CALC
+// ══════════════════════════════════════════════
+function calc() {
+    // shared badges
+    document.querySelectorAll('.egre.shared').forEach(input => {
+        const mitad = (parseFloat(input.value)||0) / 2;
+        const g = input.closest('.shared-amount-group');
+        if (g) { const b = g.querySelector('.shared-total-badge'); if(b) b.textContent = 'c/u: '+fmt(mitad); }
+    });
+
+    // cuota total for this month (add as egre)
+    const mes = getMes(), year = getYear();
+    const cuotaTotal = cuotas
+        .filter(c => isActiveInMonth(c, mes, year))
+        .reduce((s,c) => s + monthlyPayment(c), 0);
+
+    let totalIngresos = 0;
+    document.querySelectorAll('.ing').forEach(x => { totalIngresos += parseFloat(x.value)||0; });
+
+    let totalEgresos = cuotaTotal; // cuotas included
+    document.querySelectorAll('.egre').forEach(x => {
+        const val = parseFloat(x.value)||0;
+        totalEgresos += x.classList.contains('shared') ? val/2 : val;
+    });
+
+    const saldo = totalIngresos - totalEgresos;
+    document.getElementById('total-ing').textContent = fmt(totalIngresos);
+    document.getElementById('total-egre').textContent = fmt(totalEgresos);
+    document.getElementById('total-saldo').textContent = fmt(saldo);
+
+    const dot = document.querySelector('#status-indicator .status-dot');
+    const txt = document.getElementById('status-text');
+    const saldoEl = document.querySelector('.stat-card:nth-child(3) .stat-value');
+    if (saldo < 0) {
+        dot.className = 'status-dot negative';
+        txt.textContent = 'Negativo';
+        saldoEl.style.color = 'var(--danger)';
+    } else {
+        dot.className = 'status-dot positive';
+        txt.textContent = 'Positivo';
+        saldoEl.style.color = 'var(--primary)';
+    }
+
+    renderCuotas();
+    updateCharts(cuotaTotal);
+    calcularTransferencias();
+}
+
+function updateCharts(cuotaTotal) {
+    const ingresos = {};
+    document.querySelectorAll('.ing').forEach(i => {
+        ingresos[i.dataset.label] = parseFloat(i.value)||0;
+    });
+    const gastos = { 'Compras en Cuotas': cuotaTotal };
+    document.querySelectorAll('.egre').forEach(i => {
+        const lbl = i.dataset.label;
+        const val = parseFloat(i.value)||0;
+        if (!lbl.includes('Tarjeta')) gastos[lbl] = (gastos[lbl]||0) + val;
+        else gastos[lbl] = val;
+    });
+
+    const ingColors = ['#10b981','#059669','#047857','#065f46'];
+    const gasColors = ['#06b6d4','#ef4444','#dc2626','#b91c1c','#f59e0b','#d97706','#7c3aed','#8b5cf6','#3b82f6','#ec4899','#0891b2','#0e7490','#ea580c','#16a34a','#64748b','#0f766e'];
+
+    if (chartIngresos) chartIngresos.destroy();
+    const ingLabels = Object.keys(ingresos).filter(k => ingresos[k] > 0);
+    chartIngresos = new Chart(document.getElementById('chartIngresos').getContext('2d'), {
+        type:'doughnut',
+        data:{ labels:ingLabels, datasets:[{ data:ingLabels.map(k=>ingresos[k]), backgroundColor:ingColors, borderColor:'#0f172a', borderWidth:3 }] },
+        options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ position:'bottom', labels:{ font:{size:11}, color:'#94a3b8', padding:12 } } } }
+    });
+
+    if (chartGastos) chartGastos.destroy();
+    const gasLabels = Object.keys(gastos).filter(k => gastos[k] > 0);
+    chartGastos = new Chart(document.getElementById('chartGastos').getContext('2d'), {
+        type:'doughnut',
+        data:{ labels:gasLabels, datasets:[{ data:gasLabels.map(k=>gastos[k]), backgroundColor:gasColors.slice(0,gasLabels.length), borderColor:'#0f172a', borderWidth:3 }] },
+        options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ position:'bottom', labels:{ font:{size:11}, color:'#94a3b8', padding:12 } } } }
+    });
+}
+
+function calcularTransferencias() {
+    const sharedData = {};
+    document.querySelectorAll('.egre.shared').forEach(i => {
+        if (i.dataset.label) sharedData[i.dataset.label] = parseFloat(i.value)||0;
+    });
+
+    let totalManc = 0, htmlManc = '';
+    MANCOMUNADA_LABELS.forEach(lbl => {
+        const val = (sharedData[lbl]||0)/2;
+        totalManc += val;
+        htmlManc += `<div class="t-item"><span>${lbl}</span><span class="t-item-value">${fmt(val)}</span></div>`;
+    });
+    document.querySelectorAll('#extra-shared .egre.shared').forEach(i => {
+        const lbl = i.dataset.label||'Extra';
+        if (!MANCOMUNADA_LABELS.includes(lbl) && !CUCHITA_LABELS.includes(lbl)) {
+            const val = (parseFloat(i.value)||0)/2;
+            totalManc += val;
+            htmlManc += `<div class="t-item"><span>${lbl}</span><span class="t-item-value">${fmt(val)}</span></div>`;
+        }
+    });
+
+    let totalCuch = 0, htmlCuch = '';
+    CUCHITA_LABELS.forEach(lbl => {
+        const val = (sharedData[lbl]||0)/2;
+        totalCuch += val;
+        htmlCuch += `<div class="t-item"><span>${lbl}</span><span class="t-item-value">${fmt(val)}</span></div>`;
+    });
+
+    document.getElementById('items-mancomunada').innerHTML = htmlManc;
+    document.getElementById('items-cuchita').innerHTML = htmlCuch;
+    document.getElementById('total-mancomunada').textContent = fmt(totalManc);
+    document.getElementById('total-cuchita').textContent = fmt(totalCuch);
+}
+
+// ══════════════════════════════════════════════
+// MISC
+// ══════════════════════════════════════════════
+function togglePagado(cb) {
+    cb.closest('.input-row').classList.toggle('is-paid', cb.checked);
+}
+
+function eliminarFila(btn) {
+    const fila = btn.closest('.input-row');
+    if (!fila) return;
+    fila.style.opacity = '0';
+    fila.style.transform = 'translateX(10px)';
+    fila.style.transition = 'all 0.25s ease';
+    setTimeout(() => { fila.remove(); markDirty(); calc(); }, 250);
+}
+
+function establecerHoy() {
+    const h = new Date();
+    document.getElementById('mes-select').value = h.getMonth()+1;
+    document.getElementById('year-input').value = h.getFullYear();
+    calc();
+}
+
+function onDateChange() { calc(); }
+
+function addExtraIngreso() {
+    const ts = Date.now();
+    const div = document.createElement('div');
+    div.className = 'input-row';
+    div.innerHTML = `<input type="text" placeholder="Nombre del ingreso" style="flex:1;min-width:120px;" oninput="this.nextElementSibling.querySelector('input').dataset.label=this.value">
+        <div class="input-wrapper">
+            <input type="number" placeholder="0.00" class="ing" data-label="Ingreso Extra" value="0" oninput="markDirty();calc()">
+            <button class="btn btn-danger-ghost" onclick="eliminarFila(this)">×</button>
+        </div>`;
+    document.getElementById('extra-ingresos').appendChild(div);
+    calc();
+}
+
+function addExtraShared() {
+    const div = document.createElement('div');
+    div.className = 'input-row';
+    div.innerHTML = `<input type="text" placeholder="Nombre del gasto" style="flex:1;min-width:120px;">
+        <div class="input-wrapper">
+            <div class="shared-amount-group">
+                <input type="number" placeholder="0.00" class="egre shared" data-label="Gasto Extra" value="0" oninput="markDirty();calc()">
+                <span class="shared-total-badge"></span>
+            </div>
+        </div>`;
+    document.getElementById('extra-shared').appendChild(div);
+    calc();
+}
+
+function addExtraOtros() {
+    const div = document.createElement('div');
+    div.className = 'input-row';
+    div.innerHTML = `<input type="text" placeholder="Nombre del gasto" style="flex:1;min-width:120px;">
+        <div class="input-wrapper">
+            <input type="number" placeholder="0.00" class="egre" data-label="Otro Gasto" value="0" oninput="markDirty();calc()">
+            <button class="btn btn-danger-ghost" onclick="eliminarFila(this)">×</button>
+        </div>`;
+    document.getElementById('extra-otros').appendChild(div);
+    calc();
+}
+
+function exportarGastosCompartidos() {
+    const el = document.getElementById('card-gastos-compartidos');
+    const btn = el.querySelector('.btn-ghost');
+    btn.textContent = '⏳...';
+    html2canvas(el, {backgroundColor:'#1e293b', scale:2}).then(canvas => {
+        const a = document.createElement('a');
+        a.href = canvas.toDataURL('image/png');
+        a.download = 'Gastos_Familiares.png';
+        a.click();
+        btn.textContent = '📥 PNG';
+    });
+}
+
+function exportarPDF() { window.print(); }
+
+// close modal on overlay click
+document.getElementById('cuotaModal').addEventListener('click', function(e) {
+    if (e.target === this) closeCuotaModal();
+});
+
+// ══════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════
+window.addEventListener('load', function() {
+    loadFromStorage();
+    establecerHoy();
+    renderHistory();
+    markClean();
+});
+
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').catch(() => {});
+    });
+}
+</script>
+</body>
+</html>
