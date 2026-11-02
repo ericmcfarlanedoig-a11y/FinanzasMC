@@ -1,0 +1,342 @@
+<!doctype html>
+<html lang="es-PE">
+<head>
+<meta charset="utf-8">
+<title>ZHI Resultados</title>
+<style>
+@font-face{font-family:IN;font-weight:400;src:url(fonts/inter-latin-400-normal.woff2)}
+@font-face{font-family:IN;font-weight:500;src:url(fonts/inter-latin-500-normal.woff2)}
+@font-face{font-family:IN;font-weight:600;src:url(fonts/inter-latin-600-normal.woff2)}
+@font-face{font-family:IN;font-weight:700;src:url(fonts/inter-latin-700-normal.woff2)}
+@font-face{font-family:IN;font-weight:800;src:url(fonts/inter-latin-800-normal.woff2)}
+/* Paleta del reporte ZHI (variables CSS del HTML del reporte) */
+:root{--navy:#182D37;--cyan:#0099D8;--teal:#277F86;--pale:#E4F5FA;--paper:#F7F8F7;--ink:#192E38;--muted:#617580;--line:#D8E3E7}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:1080px;height:1920px;overflow:hidden;background:var(--navy)}
+#stage{position:relative;width:1080px;height:1920px;overflow:hidden;background:var(--navy);color:#fff;font-family:IN}
+.scene{position:absolute;inset:0;opacity:0;overflow:hidden}
+.abs{position:absolute}
+.h{font-weight:800;letter-spacing:-.045em;line-height:.98}
+.micro{font-weight:600;font-size:24px;letter-spacing:.14em;text-transform:uppercase}
+.src{font-weight:500;font-size:19px;line-height:1.45;opacity:.7}
+.num{font-weight:800;letter-spacing:-.05em;font-variant-numeric:tabular-nums;line-height:.9}
+.cy{color:var(--cyan)}
+.caret{display:inline-block;width:.07em;height:.8em;background:var(--cyan);margin-left:.04em;vertical-align:-.04em}
+.photo{position:absolute;background-size:cover;background-position:center;will-change:transform}
+.shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(24,45,55,.55) 0%,rgba(24,45,55,.15) 35%,rgba(24,45,55,.6) 62%,rgba(24,45,55,.96) 100%)}
+.line{position:absolute;background:currentColor;opacity:.22}
+.node{position:absolute;width:12px;height:12px;border:2px solid currentColor;transform:translate(-50%,-50%)}
+.bar{position:absolute;bottom:0;border-radius:3px 3px 0 0}
+.lbl{position:absolute;font-weight:600;font-size:20px;letter-spacing:.06em;text-align:center}
+</style>
+</head>
+<body>
+<div id="stage">
+
+<!-- 1 · 12 MESES -->
+<div class="scene" id="s1">
+  <div class="line" id="s1h1" style="height:2px;top:760px;left:0"></div>
+  <div class="line" id="s1h2" style="height:2px;top:1010px;left:0"></div>
+  <div class="line" id="s1v1" style="width:2px;left:140px;top:0"></div>
+  <div class="line" id="s1v2" style="width:2px;left:940px;top:0"></div>
+  <div class="node" style="left:140px;top:760px"></div><div class="node" style="left:940px;top:760px"></div>
+  <div class="node" style="left:140px;top:1010px"></div><div class="node" style="left:940px;top:1010px"></div>
+  <div class="abs micro" id="s1m" style="left:152px;top:718px;font-size:18px">Reporte general</div>
+  <div class="abs micro" id="s1m2" style="right:152px;top:1024px;font-size:18px">Nov 2025 / Oct 2026</div>
+  <div class="abs h" id="s1t" style="left:0;right:0;text-align:center;top:790px;font-size:190px;white-space:nowrap"></div>
+</div>
+
+<!-- 2 · PORTADA -->
+<div class="scene" id="s2">
+  <img src="img/logo_cyan.png" class="abs" id="s2logo" style="left:80px;top:250px;width:470px">
+  <div class="abs micro" id="s2m" style="left:80px;top:420px;color:var(--muted)">Reporte general · Nov 2025 a Oct 2026</div>
+  <div class="abs h" id="s2t" style="left:80px;right:70px;top:500px;font-size:112px;color:var(--ink)"></div>
+  <div class="abs" id="s2pic" style="left:80px;right:80px;top:1010px;height:640px;overflow:hidden;border-radius:4px">
+    <div class="photo" id="s2img" style="inset:0;background-image:url(img/aviva.jpg)"></div>
+  </div>
+  <div class="abs micro" id="s2by" style="left:80px;top:1680px;font-size:20px;color:var(--muted)">Presentado por Eric Mc Farlane Doig</div>
+</div>
+
+<!-- 3 · COMUNIDAD -->
+<div class="scene" id="s3">
+  <div class="abs micro cy" style="left:80px;top:300px">01 / Comunidad</div>
+  <div class="abs h" style="left:80px;right:80px;top:350px;font-size:70px">De 7 a 1.216 seguidores</div>
+  <div class="abs num" id="s3n" style="left:70px;top:520px;font-size:300px">7</div>
+  <div class="abs" style="left:80px;top:840px;font-size:34px;font-weight:600">seguidores en LinkedIn</div>
+  <svg class="abs" id="s3svg" style="left:80px;top:950px" width="920" height="520"></svg>
+  <div class="abs" id="s3net" style="left:80px;top:1530px;font-size:40px;font-weight:700"><span class="cy">+1.209</span> seguidores netos en 12 meses</div>
+  <div class="abs src" style="left:80px;top:1610px;width:900px">Metricool, seguidores al 01/11/2025 y cierres mensuales al 31/10/2026.</div>
+</div>
+
+<!-- 4 · TRAYECTORIA (fotos) -->
+<div class="scene" id="s4">
+  <div id="s4slides"></div>
+  <div class="abs micro" style="left:80px;top:300px">02 / Trayectoria</div>
+  <div class="abs micro" id="s4count" style="right:80px;top:300px">01 / 04</div>
+</div>
+
+<!-- 5 · LINKEDIN -->
+<div class="scene" id="s5">
+  <div class="abs micro" style="left:80px;top:300px;color:var(--teal)">03 / LinkedIn</div>
+  <div class="abs h" style="left:80px;right:80px;top:350px;font-size:70px;color:var(--ink)">88 publicaciones sostuvieron el año</div>
+  <div class="abs num" id="s5n" style="left:70px;top:560px;font-size:240px;color:var(--ink)">0</div>
+  <div class="abs" style="left:80px;top:820px;font-size:34px;font-weight:600;color:var(--ink)">impresiones de contenido</div>
+  <div class="abs" id="s5bars" style="left:80px;top:930px;width:920px;height:420px"></div>
+  <div class="abs" id="s5stats" style="left:80px;right:80px;top:1440px;display:flex;gap:60px;color:var(--ink)">
+    <div><div class="num" style="font-size:96px">88</div><div class="micro" style="font-size:18px;color:var(--muted);margin-top:10px">publicaciones</div></div>
+    <div><div class="num" style="font-size:96px">9.887</div><div class="micro" style="font-size:18px;color:var(--muted);margin-top:10px">interacciones</div></div>
+    <div><div class="num cy" style="font-size:96px">17</div><div class="micro" style="font-size:18px;color:var(--muted);margin-top:10px">posts en marzo</div></div>
+  </div>
+  <div class="abs src" style="left:80px;top:1640px;width:900px;color:var(--ink)">Metricool, nov 2025 a oct 2026. Impresiones de contenido total; no equivalen a usuarios únicos.</div>
+</div>
+
+<!-- 6 · WEB -->
+<div class="scene" id="s6">
+  <div class="abs" style="left:0;right:0;top:0;height:560px;overflow:hidden">
+    <div class="photo" id="s6img" style="inset:0;background-image:url(img/lor5.jpg)"></div>
+    <div class="abs" style="inset:0;background:linear-gradient(180deg,rgba(24,45,55,.2),rgba(24,45,55,1))"></div>
+  </div>
+  <div class="abs micro cy" style="left:80px;top:300px">04 / Web</div>
+  <div class="abs h" style="left:80px;right:80px;top:350px;font-size:70px">La web ya recibe tráfico recurrente</div>
+  <div class="abs num" id="s6n" style="left:70px;top:600px;font-size:240px">0</div>
+  <div class="abs" style="left:80px;top:860px;font-size:34px;font-weight:600">visualizaciones · <span class="cy">3.490 visitas</span></div>
+  <div class="abs" id="s6bars" style="left:80px;top:990px;width:920px;height:440px"></div>
+  <div class="abs src" style="left:80px;top:1560px;width:900px">Metricool, zhi.com.pe, febrero a octubre de 2026. La serie comparable empieza con el nuevo sitio.</div>
+</div>
+
+<!-- 7 · SEO -->
+<div class="scene" id="s7">
+  <div class="abs micro" style="left:80px;top:300px;color:var(--teal)">05 / SEO</div>
+  <div class="abs h" style="left:80px;right:80px;top:350px;font-size:110px;color:var(--ink)">Google ve<br>más a ZHI</div>
+  <div class="abs" id="s7bars" style="left:80px;top:700px;width:920px;height:700px"></div>
+  <div class="abs" id="s7note" style="left:80px;right:80px;top:1480px;font-size:34px;font-weight:600;line-height:1.35;color:var(--ink)">En octubre, <span style="color:var(--teal)">2.466 de las 6.431</span> impresiones fueron en Perú.</div>
+  <div class="abs src" style="left:80px;top:1640px;width:900px;color:var(--ink)">Google Search Console: may y ago en informes históricos; set y oct en exportaciones.</div>
+</div>
+
+<!-- 8 · CASOS -->
+<div class="scene" id="s8">
+  <div class="abs" id="s8a" style="left:0;right:0;top:0;height:960px;overflow:hidden">
+    <div class="photo" id="s8aimg" style="inset:0;background-image:url(img/aviva.jpg)"></div><div class="shade"></div>
+    <div class="abs micro" style="left:80px;top:300px">06 / Casos</div>
+    <div class="abs num" id="s8an" style="left:70px;top:610px;font-size:200px">45</div>
+    <div class="abs" style="left:80px;top:810px;font-size:32px;font-weight:600">clics en Google para Clínica AVIVA · setiembre</div>
+  </div>
+  <div class="abs" id="s8b" style="left:0;right:0;top:960px;height:960px;overflow:hidden">
+    <div class="photo" id="s8bimg" style="inset:0;background-image:url(img/caja3.jpg);background-position:center 40%"></div><div class="shade"></div>
+    <div class="abs num" id="s8bn" style="left:70px;top:580px;font-size:200px">37</div>
+    <div class="abs" style="left:80px;top:780px;font-size:32px;font-weight:600">vistas de la nota EsSalud Cajamarca · octubre</div>
+  </div>
+</div>
+
+<!-- 9 · AUDIENCIA -->
+<div class="scene" id="s9">
+  <div class="abs micro cy" style="left:80px;top:300px">07 / Audiencia</div>
+  <div class="abs h" style="left:80px;right:80px;top:350px;font-size:70px">La conversación llega a actores del sector</div>
+  <div class="abs" id="s9rows" style="left:80px;right:80px;top:640px"></div>
+  <div class="abs src" style="left:80px;top:1640px;width:900px">Metricool, distribución de seguidores de LinkedIn, octubre 2026.</div>
+</div>
+
+<!-- 10 · SIGUIENTE ETAPA -->
+<div class="scene" id="s10">
+  <div class="abs micro" style="left:80px;top:300px;color:var(--teal)">08 / Siguiente etapa</div>
+  <div class="abs h" style="left:80px;right:80px;top:350px;font-size:70px;color:var(--ink)">Tres decisiones para capitalizar lo ganado</div>
+  <div class="abs" id="s10list" style="left:80px;right:80px;top:620px"></div>
+</div>
+
+<!-- 11 · MOSAICO + CIERRE -->
+<div class="scene" id="s11">
+  <div class="abs" id="s11b1" style="left:0;right:0;top:0;height:640px;overflow:hidden"><div class="photo" style="inset:0;background-image:url(img/lor4.jpg);background-position:center 45%"></div></div>
+  <div class="abs" id="s11b2" style="left:0;right:0;top:640px;height:640px;overflow:hidden"><div class="photo" style="inset:0;background-image:url(img/cajadron1.jpg)"></div></div>
+  <div class="abs" id="s11b3" style="left:0;right:0;top:1280px;height:640px;overflow:hidden"><div class="photo" style="inset:0;background-image:url(img/obra.jpg)"></div></div>
+  <div class="abs" id="s11end" style="inset:0;background:var(--navy)">
+    <img src="img/logo_white.png" class="abs" id="s11logo" style="left:200px;width:680px;top:740px">
+    <div class="abs micro" id="s11m" style="left:0;right:0;text-align:center;top:1010px">Reporte general · Nov 2025 a Oct 2026</div>
+    <div class="abs" id="s11by" style="left:0;right:0;text-align:center;top:1080px;font-size:30px;font-weight:500;opacity:.8">Presentado por Eric Mc Farlane Doig</div>
+  </div>
+</div>
+
+</div>
+<script>
+const DUR=51;
+const $=id=>document.getElementById(id);
+const clamp=(x,a=0,b=1)=>Math.min(b,Math.max(a,x));
+const p=(t,a,b)=>clamp((t-a)/(b-a));
+const ew=x=>x>=1?1:1-Math.pow(2,-10*x);
+const eio=x=>x<.5?4*x*x*x:1-Math.pow(-2*x+2,3)/2;
+const eback=x=>{const c=1.6;return 1+(c+1)*Math.pow(x-1,3)+c*Math.pow(x-1,2)};
+const C={navy:'#182D37',cyan:'#0099D8',teal:'#277F86',pale:'#E4F5FA',paper:'#F7F8F7',ink:'#192E38',muted:'#617580',line:'#D8E3E7'};
+const fmt=n=>Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g,'.');
+const fmtp=(n)=>n.toFixed(2).replace('.',',');
+function show(id,t,a,b,fi=0,fo=0){const el=$(id);let o=0;if(t>=a&&t<b){o=1;if(fi>0)o=Math.min(o,p(t,a,a+fi));if(fo>0)o=Math.min(o,1-p(t,b-fo,b));}el.style.opacity=o;return o>0;}
+const caret=on=>on?'<span class="caret"></span>':'';
+const blink=t=>Math.floor(t*2.2)%2===0;
+const typed=(s,t,a,r)=>s.slice(0,Math.floor(clamp((t-a)*r,0,s.length)));
+const kb=(el,t,a,b,s0=1.12,s1=1)=>{el.style.transform=`scale(${s0+(s1-s0)*p(t,a,b)})`;};
+
+/* ---------- datos del reporte ---------- */
+const FOL=[['01 NOV',7],['NOV',260],['DIC',309],['ENE',440],['FEB',562],['MAR',742],['ABR',833],['MAY',927],['JUN',1015],['JUL',1070],['AGO',1136],['SET',1172],['OCT',1216]];
+const IMP=[['N',10977],['D',4102],['E',6041],['F',4673],['M',11550],['A',8364],['M',5592],['J',4123],['J',6237],['A',6962],['S',4005],['O',4948]];
+const WEB=[['FEB',529],['MAR',1454],['ABR',695],['MAY',708],['JUN',512],['JUL',925],['AGO',913],['SET',1000],['OCT',956]];
+const SEO=[['MAY',1583,102],['AGO',2472,154],['SET',4573,169],['OCT',6431,144]];
+const TRAY=[
+ ['img/lor1.jpg','center','Nov 2025 a Ene 2026','Arranque de la página','De 7 seguidores el 1 de noviembre a 440 al cierre de enero.','Hospital Antonio Lorena'],
+ ['img/caja2.jpg','center','Feb a Mar 2026','Nueva web y aceleración','La serie web empieza en febrero. Marzo alcanzó 1.454 visualizaciones.','EsSalud Cajamarca'],
+ ['img/lor3.jpg','center','Abr a Jul 2026','Sistema de contenidos','Casos, ingeniería en campo y notas técnicas. En junio se superaron 1.000 seguidores.','Hospital Antonio Lorena'],
+ ['img/caja1.jpg','center','Ago a Oct 2026','Visibilidad y foco','AVIVA y Cajamarca aportaron evidencia. Google amplió impresiones.','EsSalud Cajamarca']];
+const AUD=[[87.17,'seguidores en Perú','ubicación'],[41.28,'construcción','industria principal'],[3.29,'hospitales y salud','espacio para ampliar']];
+const DEC=[['01','Priorizar búsqueda local','Afinar servicios y casos para búsquedas comerciales en Perú.'],
+ ['02','Conectar prueba con oferta','Cada proyecto conduce a una solución, una página de servicio y un contacto visible.'],
+ ['03','Validar oportunidades','Medir consultas recibidas, etiquetar enlaces de LinkedIn y contar oportunidades reales.']];
+
+/* ---------- construcción ---------- */
+// escena 3: gráfico de línea
+const svg=$('s3svg'),W3=920,H3=470,maxF=1300;
+const pts=FOL.map(([m,v],i)=>[i*(W3-20)/(FOL.length-1)+10,H3-20-(v/maxF)*(H3-60)]);
+let g=`<g stroke="rgba(255,255,255,.12)" stroke-width="2">${[0,400,800,1200].map(v=>{const y=H3-20-(v/maxF)*(H3-60);return `<line x1="0" x2="${W3}" y1="${y}" y2="${y}"/>`}).join('')}</g>`;
+g+=[0,400,800,1200].map(v=>`<text x="${W3}" y="${H3-28-(v/maxF)*(H3-60)}" fill="rgba(255,255,255,.45)" font-family="IN" font-size="18" text-anchor="end">${fmt(v)}</text>`).join('');
+g+=`<path id="s3area" fill="rgba(0,153,216,.16)"/><path id="s3path" fill="none" stroke="#0099D8" stroke-width="7" stroke-linejoin="round" stroke-linecap="round"/><circle id="s3dot" r="13" fill="#0099D8" stroke="#182D37" stroke-width="5"/>`;
+g+=FOL.map(([m],i)=>i%2===0?`<text x="${pts[i][0]}" y="${H3+30}" fill="rgba(255,255,255,.6)" font-family="IN" font-weight="600" font-size="19" text-anchor="middle">${m}</text>`:'').join('');
+svg.setAttribute('height',H3+50);svg.innerHTML=g;
+// barras genéricas
+function bars(el,data,max,color,hi,lblColor,showVal){
+  const n=data.length,gap=14,w=(920-gap*(n-1))/n;
+  el.innerHTML=data.map(([m,v],i)=>`<div class="bar" style="left:${i*(w+gap)}px;width:${w}px;height:0;background:${i===hi?C.cyan:color}" data-h="${v/max}"></div>
+   <div class="lbl" style="left:${i*(w+gap)}px;width:${w}px;bottom:-40px;color:${lblColor}">${m}</div>
+   ${showVal?`<div class="lbl vl" style="left:${i*(w+gap)-20}px;width:${w+40}px;color:${lblColor};font-size:22px;font-weight:700" data-v="${v}"></div>`:''}`).join('');
+}
+bars($('s5bars'),IMP,11550,'rgba(25,46,56,.18)',4,C.muted,false);
+bars($('s6bars'),WEB,1454,'rgba(255,255,255,.22)',1,'rgba(255,255,255,.6)',true);
+// SEO: barras anchas con valor
+$('s7bars').innerHTML=SEO.map(([m,v,c],i)=>{const w=200,gap=40;return `<div class="bar" style="left:${i*(w+gap)}px;width:${w}px;height:0;background:${i===3?C.teal:'rgba(39,127,134,.35)'}" data-h="${v/6431}"></div>
+  <div class="lbl" style="left:${i*(w+gap)}px;width:${w}px;bottom:-44px;color:${C.muted};font-size:22px">${m}</div>
+  <div class="lbl vl" style="left:${i*(w+gap)}px;width:${w}px;color:${C.ink};font-size:40px;font-weight:800;letter-spacing:-.03em" data-v="${v}" data-c="${c}"></div>`}).join('');
+// trayectoria
+$('s4slides').innerHTML=TRAY.map(([src,pos,per,ti,tx,cap],i)=>`<div class="abs tslide" style="inset:0;overflow:hidden">
+  <div class="photo" style="inset:0;background-image:url(${src});background-position:${pos}"></div><div class="shade"></div>
+  <div class="abs micro cy" style="left:80px;top:1240px">${per}</div>
+  <div class="abs h ttl" style="left:80px;right:80px;top:1290px;font-size:104px">${ti}</div>
+  <div class="abs" style="left:80px;right:110px;top:1530px;font-size:34px;font-weight:500;line-height:1.35">${tx}</div>
+  <div class="abs src" style="left:80px;top:1700px">Foto: ${cap}</div></div>`).join('');
+// audiencia
+$('s9rows').innerHTML=AUD.map(([v,a,b],i)=>`<div class="arow" style="border-top:2px solid rgba(255,255,255,.14);padding:34px 0 40px">
+  <div style="display:flex;align-items:baseline;justify-content:space-between;gap:20px"><span class="num av" style="font-size:150px" data-v="${v}">0</span>
+  <span style="text-align:right"><span style="display:block;font-size:34px;font-weight:700">${a}</span><span class="micro" style="font-size:17px;opacity:.6">${b}</span></span></div>
+  <div style="height:14px;background:rgba(255,255,255,.1);margin-top:22px;border-radius:7px;overflow:hidden"><div class="afill" style="height:100%;width:0;background:${i===2?C.teal:C.cyan};border-radius:7px" data-w="${v}"></div></div></div>`).join('');
+// decisiones
+$('s10list').innerHTML=DEC.map(([n,ti,tx])=>`<div class="drow" style="border-top:2px solid ${C.line};padding:36px 0 42px;color:${C.ink}">
+  <div class="micro" style="color:${C.teal}">${n}</div><div class="h" style="font-size:76px;margin:14px 0 18px">${ti}</div>
+  <div style="font-size:30px;line-height:1.4;font-weight:500;color:${C.muted}">${tx}</div></div>`).join('');
+
+function render(t){
+  const st=$('stage');
+  let bg=C.navy;
+  if((t>=2.7&&t<7)||(t>=19&&t<24)||(t>=28.5&&t<33)||(t>=41.5&&t<46.5))bg=C.paper;
+  st.style.background=bg;
+
+  /* 1 · 12 MESES (0-3) */
+  if(show('s1',t,0,3)){
+    const gr=eio(p(t,0,.7));
+    $('s1h1').style.width=$('s1h2').style.width=(1080*gr)+'px';
+    $('s1v1').style.height=$('s1v2').style.height=(1920*gr)+'px';
+    const gO=(1-p(t,2.2,2.6))*p(t,.3,.7);
+    ['s1h1','s1h2','s1v1','s1v2'].forEach(i=>$(i).style.opacity=.22*gO);
+    ['s1m','s1m2'].forEach(i=>$(i).style.opacity=.7*gO);
+    document.querySelectorAll('#s1 .node').forEach(n=>n.style.opacity=.6*gO);
+    const s=typed('12 MESES',t,.3,9),dIn=t>1.35,ds=dIn?eback(p(t,1.35,1.65)):0;
+    $('s1t').innerHTML=s+(dIn?`<span class="cy" style="display:inline-block;transform:scale(${ds})">.</span>`:'')+caret(!dIn&&blink(t));
+    const out=eio(p(t,2.55,2.95));$('s1t').style.transform=`translateY(${-160*out}px)`;$('s1t').style.opacity=1-out;
+  }
+
+  /* 2 · PORTADA (3-7) */
+  if(show('s2',t,2.7,7,.3,.3)){
+    const l=ew(p(t,2.9,3.6));$('s2logo').style.opacity=l;$('s2logo').style.transform=`translateY(${30*(1-l)}px)`;
+    $('s2m').style.opacity=ew(p(t,3.2,3.8));
+    const TT='12 meses para\nponer a ZHI\nen el radar';const tx=typed(TT,t,3.3,22);
+    $('s2t').innerHTML=tx.replace(/\n/g,'<br>').replace('ZHI','<span class="cy">ZHI</span>')+caret(tx.length<TT.length||blink(t));
+    const r=ew(p(t,4.0,5.2));$('s2pic').style.clipPath=`inset(${100*(1-r)}% 0 0 0)`;kb($('s2img'),t,4,7,1.18,1.02);
+    $('s2by').style.opacity=ew(p(t,4.8,5.4));
+  }
+
+  /* 3 · COMUNIDAD (7-12) */
+  if(show('s3',t,7,12,.25,.3)){
+    const k=eio(p(t,7.4,10.2));
+    $('s3n').textContent=fmt(7+(1216-7)*k);
+    // línea progresiva
+    const L=(FOL.length-1)*k,i0=Math.floor(L),f=L-i0;
+    const vis=pts.slice(0,i0+1);if(i0<FOL.length-1)vis.push([pts[i0][0]+(pts[i0+1][0]-pts[i0][0])*f,pts[i0][1]+(pts[i0+1][1]-pts[i0][1])*f]);
+    const d='M'+vis.map(q=>q.join(',')).join(' L');
+    $('s3path').setAttribute('d',d);
+    const last=vis[vis.length-1];$('s3area').setAttribute('d',d+` L${last[0]},${H3-20} L${vis[0][0]},${H3-20} Z`);
+    $('s3dot').setAttribute('cx',last[0]);$('s3dot').setAttribute('cy',last[1]);
+    const nn=ew(p(t,10.2,10.8));$('s3net').style.opacity=nn;$('s3net').style.transform=`translateY(${30*(1-nn)}px)`;
+  }
+
+  /* 4 · TRAYECTORIA (12-19) */
+  if(show('s4',t,12,19,.2,.3)){
+    const slides=document.querySelectorAll('#s4 .tslide'),D=1.75;
+    slides.forEach((el,i)=>{const a=12+i*D;
+      const inn=i===0?1:eio(p(t,a-.1,a+.45));
+      el.style.clipPath=`inset(${100*(1-inn)}% 0 0 0)`;el.style.zIndex=i;
+      el.style.visibility=t>=a-.1||i===0?'visible':'hidden';
+      kb(el.querySelector('.photo'),t,a-.1,a+D+.4,1.16,1.02);
+      const tt=ew(p(t,a+.15,a+.9));el.querySelectorAll('.micro,.ttl,.ttl+div').forEach((x,j)=>{const e=ew(p(t,a+.15+j*.1,a+.95+j*.1));x.style.opacity=e;x.style.transform=`translateY(${50*(1-e)}px)`;});
+    });
+    const idx=clamp(Math.floor((t-12+.1)/D),0,3);$('s4count').textContent='0'+(idx+1)+' / 04';
+  }
+
+  /* 5 · LINKEDIN (19-24) */
+  if(show('s5',t,19,24,.25,.3)){
+    $('s5n').textContent=fmt(77574*eio(p(t,19.3,21.6)));
+    document.querySelectorAll('#s5bars .bar').forEach((b,i)=>{const e=ew(p(t,19.4+i*.08,20.4+i*.08));b.style.height=(+b.dataset.h*400*e)+'px';});
+    document.querySelectorAll('#s5stats>div').forEach((d,i)=>{const e=ew(p(t,21.4+i*.25,22.2+i*.25));d.style.opacity=e;d.style.transform=`translateY(${40*(1-e)}px)`;});
+  }
+
+  /* 6 · WEB (24-28.5) */
+  if(show('s6',t,24,28.5,.25,.3)){
+    kb($('s6img'),t,24,28.5,1.15,1.0);
+    $('s6n').textContent=fmt(7692*eio(p(t,24.3,26.4)));
+    document.querySelectorAll('#s6bars .bar').forEach((b,i)=>{const e=ew(p(t,24.5+i*.09,25.5+i*.09));const h=+b.dataset.h*380*e;b.style.height=h+'px';
+      const v=b.nextElementSibling.nextElementSibling;v.style.bottom=(h+10)+'px';v.textContent=fmt(+v.dataset.v);v.style.opacity=ew(p(t,25.2+i*.09,25.8+i*.09));});
+  }
+
+  /* 7 · SEO (28.5-33) */
+  if(show('s7',t,28.5,33,.25,.3)){
+    document.querySelectorAll('#s7bars .bar').forEach((b,i)=>{const e=ew(p(t,28.8+i*.3,30+i*.3));const h=+b.dataset.h*560*e;b.style.height=h+'px';
+      const v=b.nextElementSibling.nextElementSibling;v.style.bottom=(h+14)+'px';v.innerHTML=fmt(+v.dataset.v*e)+`<div style="font-size:20px;font-weight:600;color:${C.muted};letter-spacing:0;margin-top:4px">${v.dataset.c} clics</div>`;v.style.opacity=e;});
+    const n=ew(p(t,30.9,31.6));$('s7note').style.opacity=n;$('s7note').style.transform=`translateY(${30*(1-n)}px)`;
+  }
+
+  /* 8 · CASOS (33-37.5) */
+  if(show('s8',t,33,37.5,.2,.3)){
+    const a=eio(p(t,33,33.7)),b=eio(p(t,33.5,34.2));
+    $('s8a').style.clipPath=`inset(0 ${100*(1-a)}% 0 0)`;$('s8b').style.clipPath=`inset(0 0 0 ${100*(1-b)}%)`;
+    kb($('s8aimg'),t,33,37.5,1.15,1.0);kb($('s8bimg'),t,33.5,37.5,1.15,1.0);
+    $('s8an').textContent=Math.round(45*eio(p(t,33.8,35)));$('s8bn').textContent=Math.round(37*eio(p(t,34.3,35.5)));
+  }
+
+  /* 9 · AUDIENCIA (37.5-41.5) */
+  if(show('s9',t,37.5,41.5,.25,.3)){
+    document.querySelectorAll('#s9rows .arow').forEach((r,i)=>{const e=ew(p(t,37.7+i*.35,38.6+i*.35));r.style.opacity=e;r.style.transform=`translateY(${40*(1-e)}px)`;
+      const k=eio(p(t,37.9+i*.35,39.4+i*.35));const v=+r.querySelector('.av').dataset.v;r.querySelector('.av').textContent=fmtp(v*k)+'%';r.querySelector('.afill').style.width=(v*k)+'%';});
+  }
+
+  /* 10 · SIGUIENTE ETAPA (41.5-46.5) */
+  if(show('s10',t,41.5,46.5,.25,.3)){
+    document.querySelectorAll('#s10list .drow').forEach((r,i)=>{const e=ew(p(t,41.8+i*.55,42.8+i*.55));r.style.opacity=e;r.style.transform=`translateX(${(1-e)*-70}px)`;
+      const act=t>=41.8+i*.55&&(i===2||t<41.8+(i+1)*.55+.6);r.querySelector('.h').style.color=act&&i===Math.min(2,Math.floor((t-41.8)/.55))?C.cyan:C.ink;});
+  }
+
+  /* 11 · MOSAICO + CIERRE (46.5-51) */
+  if(show('s11',t,46.5,51,0,0)){
+    [['s11b1',46.5],['s11b2',46.7],['s11b3',46.9]].forEach(([id,a])=>{const e=ew(p(t,a,a+.8));$(id).style.clipPath=`inset(0 ${100*(1-e)}% 0 0)`;kb($(id).firstElementChild,t,a,51,1.15,1.0);});
+    const c=eio(p(t,48.1,48.7));$('s11end').style.clipPath=`inset(${50*(1-c)}% 0 ${50*(1-c)}% 0)`;
+    const l=ew(p(t,48.5,49.4));$('s11logo').style.opacity=l;$('s11logo').style.transform=`scale(${.9+.1*l})`;
+    $('s11m').style.opacity=.85*ew(p(t,49,49.6));$('s11by').style.opacity=.8*ew(p(t,49.3,49.9));
+    st.style.filter=`brightness(${1-p(t,50.4,51)})`;
+  } else st.style.filter='';
+}
+window.render=render;window.DUR=DUR;
+if(!location.search.includes('capture')){const t0=performance.now();(function loop(){render(((performance.now()-t0)/1000)%DUR);requestAnimationFrame(loop)})();}
+</script>
+</body>
+</html>
