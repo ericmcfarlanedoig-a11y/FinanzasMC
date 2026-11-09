@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="es-PE">
+<head>
+<meta charset="utf-8">
+<title>ZHI Industrial Octubre</title>
+<style>
+@font-face{font-family:IN;font-weight:500;src:url(fonts/inter-latin-500-normal.woff2)}
+@font-face{font-family:IN;font-weight:600;src:url(fonts/inter-latin-600-normal.woff2)}
+@font-face{font-family:IN;font-weight:700;src:url(fonts/inter-latin-700-normal.woff2)}
+@font-face{font-family:IN;font-weight:800;src:url(fonts/inter-latin-800-normal.woff2)}
+/* Colores tomados de piezas de ZHI Industrial: naranja y petróleo de "Titular Nota", azul del banner, crema del video de octubre */
+:root{--petrol:#0D2E36;--orange:#EC7A23;--blue:#264358;--cream:#F2F0EA;--muted:#5E7178}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:1080px;height:1920px;overflow:hidden;background:var(--petrol)}
+#stage{position:relative;width:1080px;height:1920px;overflow:hidden;background:var(--petrol);color:#fff;font-family:IN}
+.scene{position:absolute;inset:0;opacity:0;overflow:hidden}
+.abs{position:absolute}
+.h{font-weight:800;letter-spacing:-.04em;line-height:.95;text-transform:uppercase}
+.micro{font-weight:700;font-size:24px;letter-spacing:.14em;text-transform:uppercase}
+.src{font-weight:600;font-size:19px;letter-spacing:.08em;text-transform:uppercase;opacity:.65}
+.num{font-weight:800;letter-spacing:-.05em;font-variant-numeric:tabular-nums;line-height:.9}
+.or{color:var(--orange)}
+.caret{display:inline-block;width:.07em;height:.8em;background:var(--orange);margin-left:.04em;vertical-align:-.04em}
+.photo{position:absolute;background-size:cover;background-position:center;will-change:transform}
+.shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(13,46,54,.5) 0%,rgba(13,46,54,.15) 30%,rgba(13,46,54,.75) 58%,rgba(13,46,54,.97) 100%)}
+.line{position:absolute;background:currentColor;opacity:.22}
+.node{position:absolute;width:12px;height:12px;border:2px solid currentColor;transform:translate(-50%,-50%)}
+.rule{height:10px;background:var(--orange);border-radius:2px}
+</style>
+</head>
+<body>
+<div id="stage">
+
+<!-- 1 · OCTUBRE 2026 -->
+<div class="scene" id="s1">
+  <div class="line" id="s1h1" style="height:2px;top:770px;left:0"></div>
+  <div class="line" id="s1h2" style="height:2px;top:1010px;left:0"></div>
+  <div class="line" id="s1v1" style="width:2px;left:110px;top:0"></div>
+  <div class="line" id="s1v2" style="width:2px;left:970px;top:0"></div>
+  <div class="node" style="left:110px;top:770px"></div><div class="node" style="left:970px;top:770px"></div>
+  <div class="node" style="left:110px;top:1010px"></div><div class="node" style="left:970px;top:1010px"></div>
+  <div class="abs micro" id="s1m" style="left:122px;top:728px;font-size:18px">Caso real</div>
+  <div class="abs micro" id="s1m2" style="right:122px;top:1024px;font-size:18px">Resultado digital</div>
+  <div class="abs h" id="s1t" style="left:0;right:0;text-align:center;top:815px;font-size:128px;white-space:nowrap"></div>
+</div>
+
+<!-- 2 · PORTADA -->
+<div class="scene" id="s2">
+  <div class="abs" style="left:0;top:0;width:14px;height:1920px;background:var(--orange)" id="s2bar"></div>
+  <div class="abs micro or" id="s2m" style="left:80px;top:250px">Caso real / Octubre 2026</div>
+  <div class="abs" id="s2box" style="left:80px;right:80px;top:310px;height:420px;background:var(--orange);border-radius:26px;display:grid;place-items:center">
+    <img src="img/logo_white.png" style="width:440px">
+  </div>
+  <div class="abs h" id="s2t" style="left:80px;right:60px;top:800px;font-size:112px;color:var(--petrol)"></div>
+  <div class="abs" id="s2pic" style="left:80px;right:80px;top:1150px;height:520px;overflow:hidden;border-radius:6px">
+    <div class="photo" id="s2img" style="inset:0;background-image:url(img/n2.jpg)"></div>
+  </div>
+  <div class="abs src" id="s2cap" style="left:80px;top:1700px;color:var(--petrol)">Imagen: archivo web ZHI Industrial</div>
+</div>
+
+<!-- 3 · GOOGLE -->
+<div class="scene" id="s3">
+  <svg class="abs" style="left:0;top:0" width="1080" height="1920"><g fill="none" stroke="#EC7A23" stroke-opacity=".18" stroke-width="2">
+    <circle id="s3c1" cx="540" cy="760" r="300"/><circle id="s3c2" cx="540" cy="760" r="470"/></g></svg>
+  <div class="abs micro or" style="left:80px;top:300px">01 / Google</div>
+  <div class="abs h" style="left:80px;right:80px;top:350px;font-size:76px">La industria también se posiciona</div>
+  <div class="abs num" id="s3n" style="left:66px;top:560px;font-size:250px">+0,0%</div>
+  <div class="abs rule" id="s3rule" style="left:80px;top:810px;width:920px"></div>
+  <div class="abs h" style="left:80px;top:860px;font-size:72px">Impresiones<br><span class="or">en Google</span></div>
+  <div class="abs" id="s3bars" style="left:80px;right:80px;top:1080px"></div>
+  <div class="abs src" style="left:80px;top:1680px">Search Console · octubre vs. setiembre 2026</div>
+</div>
+
+<!-- 4 · LINKEDIN -->
+<div class="scene" id="s4">
+  <div class="photo" id="s4img" style="inset:0;background-image:url(img/nitro.jpg)"></div><div class="shade"></div>
+  <div class="abs micro or" style="left:80px;top:300px">02 / LinkedIn</div>
+  <div class="abs num" id="s4n" style="left:66px;top:930px;font-size:340px">+0</div>
+  <div class="abs rule" id="s4rule" style="left:80px;top:1240px;width:920px"></div>
+  <div class="abs h" style="left:80px;top:1290px;font-size:84px">Seguidores<br><span class="or">netos</span></div>
+  <div class="abs" id="s4from" style="left:80px;top:1530px;font-size:40px;font-weight:700">De <span id="s4a">69</span> a <span class="or" id="s4b">69</span> seguidores</div>
+  <div class="abs src" style="left:80px;top:1680px">LinkedIn · octubre 2026 · imagen: archivo web ZHI Industrial</div>
+</div>
+
+<!-- 5 · WEB -->
+<div class="scene" id="s5">
+  <div class="abs" style="left:0;top:0;width:14px;height:1920px;background:var(--orange)"></div>
+  <div class="abs micro or" style="left:80px;top:300px">03 / Web</div>
+  <div class="abs h" style="left:80px;right:80px;top:350px;font-size:76px;color:var(--petrol)">Más tiempo con el contenido</div>
+  <div class="abs num" id="s5n" style="left:66px;top:560px;font-size:250px;color:var(--petrol)">0,0 s</div>
+  <div class="abs rule" id="s5rule" style="left:80px;top:810px;width:920px"></div>
+  <div class="abs h" style="left:80px;top:860px;font-size:72px;color:var(--petrol)">Interacción<br><span class="or">media web</span></div>
+  <div class="abs" id="s5bars" style="left:80px;right:80px;top:1080px;color:var(--petrol)"></div>
+  <div class="abs src" style="left:80px;top:1680px;color:var(--petrol)">GA4 · por usuario activo · octubre vs. setiembre 2026</div>
+</div>
+
+<!-- 6 · RESUMEN -->
+<div class="scene" id="s6">
+  <div class="abs micro or" style="left:80px;top:300px">Octubre 2026</div>
+  <div class="abs h" style="left:80px;right:80px;top:350px;font-size:96px">Tres señales<br>de avance</div>
+  <div class="abs" id="s6rows" style="left:80px;right:80px;top:640px"></div>
+</div>
+
+<!-- 7 · CIERRE -->
+<div class="scene" id="s7">
+  <div class="abs" id="s7bg" style="inset:0;background:var(--orange)"></div>
+  <img src="img/logo_white.png" class="abs" id="s7logo" style="left:300px;width:480px;top:640px">
+  <div class="abs h" id="s7t" style="left:0;right:0;text-align:center;top:1000px;font-size:80px">Resultados que<br><span style="color:var(--petrol)">se hacen ver.</span></div>
+  <div class="abs" id="s7url" style="left:0;right:0;text-align:center;top:1230px;font-size:36px;font-weight:600">zhiindustrial.com.pe</div>
+  <div class="abs micro" id="s7by" style="left:0;right:0;text-align:center;top:1300px;font-size:20px;opacity:.85">Presentado por Eric Mc Farlane Doig</div>
+</div>
+
+</div>
+<script>
+const DUR=32;
+const $=id=>document.getElementById(id);
+const clamp=(x,a=0,b=1)=>Math.min(b,Math.max(a,x));
+const p=(t,a,b)=>clamp((t-a)/(b-a));
+const ew=x=>x>=1?1:1-Math.pow(2,-10*x);
+const eio=x=>x<.5?4*x*x*x:1-Math.pow(-2*x+2,3)/2;
+const eback=x=>{const c=1.6;return 1+(c+1)*Math.pow(x-1,3)+c*Math.pow(x-1,2)};
+const C={petrol:'#0D2E36',orange:'#EC7A23',blue:'#264358',cream:'#F2F0EA',muted:'#5E7178'};
+const dec=(n,d=1)=>n.toFixed(d).replace('.',',');
+function show(id,t,a,b,fi=0,fo=0){const el=$(id);let o=0;if(t>=a&&t<b){o=1;if(fi>0)o=Math.min(o,p(t,a,a+fi));if(fo>0)o=Math.min(o,1-p(t,b-fo,b));}el.style.opacity=o;return o>0;}
+const caret=on=>on?'<span class="caret"></span>':'';
+const blink=t=>Math.floor(t*2.2)%2===0;
+const typed=(s,t,a,r)=>s.slice(0,Math.floor(clamp((t-a)*r,0,s.length)));
+const kb=(el,t,a,b,s0=1.12,s1=1)=>{el.style.transform=`scale(${s0+(s1-s0)*p(t,a,b)})`;};
+
+/* comparativas antes / ahora */
+function cmp(el,rows,max,fmt,dark){
+  el.innerHTML=rows.map(([lab,v,hi])=>`<div class="crow" style="margin-bottom:46px">
+    <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:14px">
+      <span class="micro" style="font-size:22px;opacity:.75">${lab}</span><span class="num cv" style="font-size:76px;${hi?'color:'+C.orange:''}" data-v="${v}">${fmt(0)}</span></div>
+    <div style="height:30px;background:${dark?'rgba(255,255,255,.1)':'rgba(13,46,54,.1)'};border-radius:4px;overflow:hidden"><div class="cfill" style="height:100%;width:0;border-radius:4px;background:${hi?C.orange:(dark?'rgba(255,255,255,.45)':'rgba(13,46,54,.35)')}" data-w="${v/max}"></div></div></div>`).join('');
+}
+cmp($('s3bars'),[['Setiembre',401,0],['Octubre',649,1]],649,v=>Math.round(v).toString(),true);
+cmp($('s5bars'),[['Setiembre',19.4,0],['Octubre',42.4,1]],42.4,v=>dec(v)+' s',false);
+const ROWS=[['+61,8%','impresiones en Google','Search Console'],['+20','seguidores netos en LinkedIn','de 69 a 89'],['42,4 s','interacción media web','19,4 s en setiembre']];
+$('s6rows').innerHTML=ROWS.map(([n,a,b])=>`<div class="srow" style="border-top:2px solid rgba(255,255,255,.15);padding:34px 0 38px">
+  <div class="num" style="font-size:150px">${n}</div><div style="font-size:36px;font-weight:700;margin-top:14px">${a}</div>
+  <div class="src" style="margin-top:8px">${b}</div></div>`).join('');
+
+function runCmp(el,t,a,fmt){el.querySelectorAll('.crow').forEach((r,i)=>{const e=ew(p(t,a+i*.45,a+1.2+i*.45));r.style.opacity=ew(p(t,a+i*.45,a+.4+i*.45));
+  r.querySelector('.cfill').style.width=(+r.querySelector('.cfill').dataset.w*100*e)+'%';const v=r.querySelector('.cv');v.textContent=fmt(+v.dataset.v*e);});}
+
+function render(t){
+  const st=$('stage');
+  let bg=C.petrol;
+  if((t>=3.7&&t<8)||(t>=18&&t<22))bg=C.cream;
+  st.style.background=bg;
+
+  /* 1 · 0-4 */
+  if(show('s1',t,0,4)){
+    const gr=eio(p(t,0,.9));
+    $('s1h1').style.width=$('s1h2').style.width=(1080*gr)+'px';
+    $('s1v1').style.height=$('s1v2').style.height=(1920*gr)+'px';
+    const gO=(1-p(t,3.1,3.5))*p(t,.4,.9);
+    ['s1h1','s1h2','s1v1','s1v2'].forEach(i=>$(i).style.opacity=.22*gO);
+    ['s1m','s1m2'].forEach(i=>$(i).style.opacity=.7*gO);
+    document.querySelectorAll('#s1 .node').forEach(n=>n.style.opacity=.6*gO);
+    const s=typed('OCTUBRE 2026',t,.5,8),dIn=t>2.1,ds=dIn?eback(p(t,2.1,2.4)):0;
+    $('s1t').innerHTML=s+(dIn?`<span class="or" style="display:inline-block;transform:scale(${ds})">.</span>`:'')+caret(!dIn&&blink(t));
+    const out=eio(p(t,3.4,3.9));$('s1t').style.transform=`translateY(${-160*out}px)`;$('s1t').style.opacity=1-out;
+  }
+
+  /* 2 · 4-8 portada */
+  if(show('s2',t,3.7,8,.3,.3)){
+    $('s2m').style.opacity=ew(p(t,3.9,4.4));
+    const b=ew(p(t,4.0,4.9));$('s2box').style.transform=`scale(${.85+.15*b}) rotate(${-3*(1-b)}deg)`;$('s2box').style.opacity=b;
+    $('s2bar').style.transform=`scaleY(${ew(p(t,3.8,4.6))})`;$('s2bar').style.transformOrigin='top';
+    const TT='Resultados que\nse hacen ver.';const tx=typed(TT,t,4.6,20);
+    $('s2t').innerHTML=tx.replace('\n','<br><span class="or">')+(tx.includes('\n')?'</span>':'')+caret(tx.length<TT.length||blink(t));
+    const r=ew(p(t,5.3,6.4));$('s2pic').style.clipPath=`inset(${100*(1-r)}% 0 0 0)`;kb($('s2img'),t,5.3,8,1.18,1.02);
+    $('s2cap').style.opacity=.65*ew(p(t,6,6.5));
+  }
+
+  /* 3 · 8-14 Google */
+  if(show('s3',t,8,14,.25,.3)){
+    const k=eio(p(t,8.3,10.2));$('s3n').textContent='+'+dec(61.8*k)+'%';
+    $('s3rule').style.transform=`scaleX(${ew(p(t,8.5,9.5))})`;$('s3rule').style.transformOrigin='left';
+    const c=ew(p(t,8,9.6));$('s3c1').setAttribute('r',120+180*c);$('s3c2').setAttribute('r',200+270*c);
+    runCmp($('s3bars'),t,10.2,v=>Math.round(v).toString());
+  }
+
+  /* 4 · 14-18 LinkedIn */
+  if(show('s4',t,14,18,.25,.3)){
+    kb($('s4img'),t,14,18,1.15,1.0);
+    const k=eio(p(t,14.3,15.8));$('s4n').textContent='+'+Math.round(20*k);$('s4b').textContent=Math.round(69+20*k);
+    $('s4rule').style.transform=`scaleX(${ew(p(t,14.5,15.5))})`;$('s4rule').style.transformOrigin='left';
+    const f=ew(p(t,15.8,16.4));$('s4from').style.opacity=f;$('s4from').style.transform=`translateY(${30*(1-f)}px)`;
+  }
+
+  /* 5 · 18-22 Web */
+  if(show('s5',t,18,22,.25,.3)){
+    const k=eio(p(t,18.3,19.8));$('s5n').textContent=dec(42.4*k)+' s';
+    $('s5rule').style.transform=`scaleX(${ew(p(t,18.5,19.5))})`;$('s5rule').style.transformOrigin='left';
+    runCmp($('s5bars'),t,19.6,v=>dec(v)+' s');
+  }
+
+  /* 6 · 22-26 resumen */
+  if(show('s6',t,22,26,.25,.3)){
+    document.querySelectorAll('#s6rows .srow').forEach((r,i)=>{const e=ew(p(t,22.3+i*.5,23.2+i*.5));r.style.opacity=e;r.style.transform=`translateX(${(1-e)*-80}px)`;
+      r.querySelector('.num').style.color=(t>=22.3+i*.5&&t<22.3+(i+1)*.5+.3)||(i===2&&t>=23.3)?C.orange:'#fff';});
+  }
+
+  /* 7 · 26-32 cierre */
+  if(show('s7',t,26,32,0,0)){
+    const c=eio(p(t,26,26.6));$('s7bg').style.clipPath=`circle(${150*c}% at 50% 50%)`;
+    const l=ew(p(t,26.5,27.4));$('s7logo').style.opacity=l;$('s7logo').style.transform=`scale(${.85+.15*l})`;
+    const tt=ew(p(t,27.2,28));$('s7t').style.opacity=tt;$('s7t').style.transform=`translateY(${40*(1-tt)}px)`;
+    $('s7url').style.opacity=ew(p(t,27.9,28.5));$('s7by').style.opacity=.85*ew(p(t,28.3,28.9));
+    st.style.filter=`brightness(${1-p(t,31.2,32)})`;
+  } else st.style.filter='';
+}
+window.render=render;window.DUR=DUR;
+if(!location.search.includes('capture')){const t0=performance.now();(function loop(){render(((performance.now()-t0)/1000)%DUR);requestAnimationFrame(loop)})();}
+</script>
+</body>
+</html>
